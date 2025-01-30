@@ -17,10 +17,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/stephan-fischer/gallery-plus.git"
+    "url": "git+https://github.com/stephan-fischer/capacitor-gallery-plus.git"
   },
   "bugs": {
-    "url": "https://github.com/stephan-fischer/gallery-plus/issues"
+    "url": "https://github.com/stephan-fischer/capacitor-gallery-plus/issues"
   },
   "keywords": [
     "capacitor",
