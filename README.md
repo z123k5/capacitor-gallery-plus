@@ -15,6 +15,39 @@ npm install capacitor-gallery-plus
 npx cap sync
 ```
 
+## iOS Setup
+
+To ensure the plugin works correctly on iOS, you need to add the following permissions to your `Info.plist` file.  
+
+### **Required Permissions**
+Open your `ios/App/App/Info.plist` file and add the following keys inside the `<dict>` tag:
+
+```xml
+<key>NSPhotoLibraryUsageDescription</key>
+<string>This app requires access to your photo library to display media files.</string>
+
+This permission is required for accessing media files in the user's gallery.  
+If this is missing, the app might crash or fail to fetch media.
+
+### **Requesting Permissions in Code**
+If you need to explicitly request permissions, you can call:
+
+```typescript
+const permission = await GalleryPlus.checkPermissions();
+if (permission.status !== "granted") {
+  const request = await GalleryPlus.requestPermissions();
+  if (request.status !== "granted") {
+    console.error("Permission denied.");
+  }
+}
+```
+
+This ensures the app prompts the user for access when needed.
+
+---
+
+💡 **Tip:** If you experience crashes on iOS, check your Xcode logs to confirm missing permissions.
+
 ## Usage
 
 ```typescript

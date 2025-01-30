@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.0.4] - 2025-01-30
+
+### Added
+- Implemented **photo selection in Web** using `showDirectoryPicker`.
+- Web support now properly reads images and retrieves metadata.
+
+### Fixed
+- **iOS date format** now returns a correct timestamp in milliseconds.
+- **iOS width & height calculation** now returns the correct original dimensions instead of the thumbnail size.
+
+### Improved
+- General stability and performance improvements for media retrieval.
 
 ## [0.0.3] - 2025-01-30
 

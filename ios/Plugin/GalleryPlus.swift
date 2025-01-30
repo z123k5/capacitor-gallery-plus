@@ -79,7 +79,7 @@ public class GalleryPlus: NSObject {
                 var mediaItem: [String: Any] = [
                     "id": asset.localIdentifier,
                     "type": asset.mediaType == .image ? "image" : "video",
-                    "createdAt": asset.creationDate?.description ?? ""
+                    "createdAt":   (asset.creationDate?.timeIntervalSince1970 ?? 0) * 1000
                 ]
 
                 imageManager.requestImage(for: asset, targetSize: targetSize, contentMode: .aspectFit, options: requestOptions) { image, _ in
@@ -103,10 +103,19 @@ public class GalleryPlus: NSObject {
                         mediaItem["fileSize"] = fileSize
                     }
 
-                    imageManager.requestImage(for: asset, targetSize: targetSize, contentMode: .aspectFit, options: requestOptions) { image, _ in
-                        if let image = image {
-                            mediaItem["width"] = Int(image.size.width)
-                            mediaItem["height"] = Int(image.size.height)
+                    // Hole die Originalgröße des Bildes
+                    let options = PHImageRequestOptions()
+                    options.isSynchronous = true  // Wichtig, damit wir die Größe sofort bekommen
+
+                    imageManager.requestImageDataAndOrientation(for: asset, options: options) { data, _, _, _ in
+                        if let data = data,
+                        let imageSource = CGImageSourceCreateWithData(data as CFData, nil),
+                        let properties = CGImageSourceCopyPropertiesAtIndex(imageSource, 0, nil) as? [CFString: Any],
+                        let width = properties[kCGImagePropertyPixelWidth] as? Int,
+                        let height = properties[kCGImagePropertyPixelHeight] as? Int {
+                            
+                            mediaItem["width"] = width
+                            mediaItem["height"] = height
                         }
                     }
                 }

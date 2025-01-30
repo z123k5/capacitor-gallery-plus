@@ -8,13 +8,15 @@
   <ion-button expand="full" (click)="getMediaFiles()">Load Media</ion-button>
 
   <ion-list>
-    <ion-item *ngFor="let media of mediaList">
+    <ion-item *ngFor="let media of mediaList"  [style.--background]="media.baseColor">
       <ion-thumbnail slot="start">
-        <img [src]="'data:image/jpeg;base64,' + media.thumbnail" *ngIf="media.thumbnail">
+        <img oading="lazy" [src]="media.fileData">
       </ion-thumbnail>
-      <ion-label>
-        <h2>{{ media.type }}</h2>
-        <p>{{ media.createdAt }}</p>
+      <ion-label >
+        <h2> {{ media.type }}</h2>
+        <p>
+          {{ media.width }} x {{ media.height }} px / {{ media.createdAt | date:'short' }}
+        </p>
       </ion-label>
     </ion-item>
   </ion-list>

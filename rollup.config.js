@@ -1,4 +1,4 @@
-  export default {
+export default {
     input: 'dist/esm/index.js',
     output: [
       {
@@ -19,5 +19,6 @@
       },
     ],
     external: ['@capacitor/core'],
+    context: 'this',
   };
   
