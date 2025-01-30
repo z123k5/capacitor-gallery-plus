@@ -1,0 +1,21 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>GalleryPlus Test</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-button expand="full" (click)="getMediaFiles()">Load Media</ion-button>
+
+  <ion-list>
+    <ion-item *ngFor="let media of mediaList">
+      <ion-thumbnail slot="start">
+        <img [src]="'data:image/jpeg;base64,' + media.thumbnail" *ngIf="media.thumbnail">
+      </ion-thumbnail>
+      <ion-label>
+        <h2>{{ media.type }}</h2>
+        <p>{{ media.createdAt }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>
