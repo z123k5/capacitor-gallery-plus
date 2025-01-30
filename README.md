@@ -25,6 +25,7 @@ Open your `ios/App/App/Info.plist` file and add the following keys inside the `<
 ```xml
 <key>NSPhotoLibraryUsageDescription</key>
 <string>This app requires access to your photo library to display media files.</string>
+```
 
 This permission is required for accessing media files in the user's gallery.  
 If this is missing, the app might crash or fail to fetch media.
@@ -103,14 +104,36 @@ requestPermissions() => Promise<{ status: string; }>
 ### getMedias(...)
 
 ```typescript
-getMedias(options: { type?: "image" | "video" | "all"; limit?: number; startAt?: number; thumbnailSize?: number; sort?: "oldest" | "newest"; includeDetails?: boolean; includeBaseColor?: boolean; generatePath?: boolean; filter?: "all" | "panorama" | "hdr" | "screenshot"; }) => Promise<{ media: MediaItem[]; }>
+getMedias(options: { 
+  type?: "image" | "video" | "all"; 
+  limit?: number; 
+  startAt?: number; 
+  thumbnailSize?: number; 
+  sort?: "oldest" | "newest"; 
+  includeDetails?: boolean; 
+  includeBaseColor?: boolean; 
+  generatePath?: boolean; 
+  filter?: "all" | "panorama" | "hdr" | "screenshot"; 
+}) => Promise<{ media: MediaItem[]; }>
 ```
 
-| Param         | Type                                                                                                                                                                                                                                                                             |
-| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`options`** | <code>{ type?: 'image' \| 'video' \| 'all'; limit?: number; startAt?: number; thumbnailSize?: number; sort?: 'oldest' \| 'newest'; includeDetails?: boolean; includeBaseColor?: boolean; generatePath?: boolean; filter?: 'all' \| 'panorama' \| 'hdr' \| 'screenshot'; }</code> |
+| Param         | Type                                                                                                                   | Description |
+|--------------|------------------------------------------------------------------------------------------------------------------------|-------------|
+| **`type`**   | <code>"image" \| "video" \| "all"</code>                                                                                | The type of media to retrieve. Default is `"all"`. |
+| **`limit`**  | <code>number</code>                                                                                                    | The maximum number of media items to return. |
+| **`startAt`** | <code>number</code>                                                                                                   | The starting index for pagination. |
+| **`thumbnailSize`** | <code>number</code>                                                                                             | The size of the thumbnail in pixels (e.g., `200` for 200x200px). |
+| **`sort`**   | <code>"oldest" \| "newest"</code>                                                                                      | Sort order of the media items. Default is `"newest"`. |
+| **`includeDetails`** | <code>boolean</code>                                                                                           | Whether to include additional details like width, height, and file size. |
+| **`includeBaseColor`** | <code>boolean</code>                                                                                        | Whether to extract and return the dominant color of the image. |
+| **`generatePath`** | <code>boolean</code>                                                                                            | Whether to generate a temporary path to access the media. |
+| **`filter`** | <code>"all" \| "panorama" \| "hdr" \| "screenshot"</code>                                                              | Filters the media based on specific types (e.g., panorama, HDR, or screenshots). Default is `"all"`. |
 
-**Returns:** <code>Promise&lt;{ media: MediaItem[]; }&gt;</code>
+**Returns:**  
+A **Promise** resolving to an object containing a list of media items:
+```typescript
+Promise<{ media: MediaItem[] }>
+```
 
 --------------------
 
@@ -132,21 +155,22 @@ getMedia(options: { id: string; includeBaseColor?: boolean; }) => Promise<MediaI
 
 ### Interfaces
 
-
 #### MediaItem
 
-| Prop            | Type                            |
-| --------------- | ------------------------------- |
-| **`id`**        | <code>string</code>             |
-| **`type`**      | <code>'image' \| 'video'</code> |
-| **`createdAt`** | <code>string</code>             |
-| **`thumbnail`** | <code>string</code>             |
-| **`baseColor`** | <code>string</code>             |
-| **`name`**      | <code>string</code>             |
-| **`width`**     | <code>number</code>             |
-| **`height`**    | <code>number</code>             |
-| **`fileSize`**  | <code>number</code>             |
-| **`path`**      | <code>string</code>             |
+| Prop          | Type                            | Description |
+|--------------|--------------------------------|-------------|
+| **id**        | <code>string</code>             | Unique identifier of the media item. |
+| **type**      | <code>'image' \| 'video'</code> | The type of media (image or video). |
+| **createdAt** | <code>number</code> | The Unix timestamp in milliseconds when the media was created. |
+| **thumbnail** | <code>string</code>             | Base64 thumbnail image (if available). |
+| **baseColor** | <code>string</code>             | Dominant color of the image (if requested). |
+| **name**      | <code>string</code>             | Original file name of the media. |
+| **width**     | <code>number</code>             | Width of the media in pixels. |
+| **height**    | <code>number</code>             | Height of the media in pixels. |
+| **fileSize**  | <code>number</code>             | Size of the file in bytes. |
+| **path**      | <code>string</code>             | File path or accessible URI of the media item. |
+
+
 
 </docgen-api>
 
