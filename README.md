@@ -2,6 +2,11 @@
 
 A Capacitor plugin for accessing and managing media files (photos & videos) on iOS and Android. This plugin provides an easy way to retrieve media from the device's gallery, including metadata such as filenames, paths, and types.
 
+## Supported Platforms
+
+Currently, this plugin only supports **Web** and **iOS**.  
+Android is not supported at the moment, but an implementation is planned.
+
 ## Features
 - 📸 Retrieve photos & videos from the device gallery
 - 🏷️ Get metadata like filenames, paths, and MIME types
