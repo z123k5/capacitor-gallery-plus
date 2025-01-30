@@ -2,10 +2,13 @@
 
 A Capacitor plugin for accessing and managing media files (photos & videos) on iOS and Android. This plugin provides an easy way to retrieve media from the device's gallery, including metadata such as filenames, paths, and types.
 
-## Supported Platforms
-
-Currently, this plugin only supports **Web** and **iOS**.  
-Android is not supported at the moment, but an implementation is planned.
+<p align="center">
+  <img src="https://img.shields.io/badge/capacitor%20versions-v5,%20v6%20and%20v7-blue?logo=Capacitor&style=flat-square" />
+  <br/>
+  <img src="https://img.shields.io/badge/Web-Supported-brightgreen?style=flat&logo=internet-explorer&logoColor=white" />
+  <img src="https://img.shields.io/badge/iOS-Supported-brightgreen?style=flat&logo=apple&logoColor=white" />
+  <img src="https://img.shields.io/badge/Android-Planned-orange?style=flat&logo=android&logoColor=white&labelColor=grey" />
+</p>
 
 ## Features
 - 📸 Retrieve photos & videos from the device gallery
