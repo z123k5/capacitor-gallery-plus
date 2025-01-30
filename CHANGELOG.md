@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.0.5] - 2025-01-30
+### Changed
+- Improved example project with better media handling for Web and native platforms.
+- Refined platform-specific logic to enhance performance.
+
 ## [0.0.4] - 2025-01-30
 
 ### Added

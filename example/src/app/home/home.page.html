@@ -1,23 +1,31 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>GalleryPlus Test</ion-title>
-  </ion-toolbar>
+    <ion-toolbar>
+        <ion-title>GalleryPlus Test</ion-title>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-button expand="full" (click)="getMediaFiles()">Load Media</ion-button>
+    <ion-button expand="full" (click)="getMediaFiles()">Load Media</ion-button>
 
-  <ion-list>
-    <ion-item *ngFor="let media of mediaList"  [style.--background]="media.baseColor">
-      <ion-thumbnail slot="start">
-        <img oading="lazy" [src]="media.fileData">
-      </ion-thumbnail>
-      <ion-label >
-        <h2> {{ media.type }}</h2>
-        <p>
-          {{ media.width }} x {{ media.height }} px / {{ media.createdAt | date:'short' }}
-        </p>
-      </ion-label>
-    </ion-item>
-  </ion-list>
+    <ion-list>
+        <ion-item
+            *ngFor="let media of mediaList"
+            [style.--background]="media.baseColor"
+        >
+            <ion-thumbnail slot="start">
+                <img oading="lazy" [src]="media.fileData" />
+            </ion-thumbnail>
+            <ion-label>
+                <h2>{{ media.type }}</h2>
+                <p>
+                    {{ media.width }} x {{ media.height }} px / {{
+                    media.createdAt | date:'short' }}
+                </p>
+            </ion-label>
+        </ion-item>
+    </ion-list>
+    <ion-infinite-scroll (ionInfinite)="onIonInfinite($event)" [disabled]="!platform.is('hybrid')">
+        <ion-infinite-scroll-content></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+
 </ion-content>
