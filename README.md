@@ -3,7 +3,7 @@
 A Capacitor plugin for accessing and managing media files (photos & videos) on iOS and Android. This plugin provides an easy way to retrieve media from the device's gallery, including metadata such as filenames, paths, and types.
 
 <p align="center">
-  <img src="https://img.shields.io/badge/capacitor%20versions-v5,%20v6%20and%20v7-blue?logo=Capacitor&style=flat-square" />
+  <img src="https://img.shields.io/badge/Capacitor%20Versions-v5,%20v6%20and%20v7-blue?logo=Capacitor&style=flat-square" />
   <br/>
   <img src="https://img.shields.io/badge/Web-Supported-brightgreen?style=flat&logo=internet-explorer&logoColor=white" />
   <img src="https://img.shields.io/badge/iOS-Supported-brightgreen?style=flat&logo=apple&logoColor=white" />
@@ -11,7 +11,7 @@ A Capacitor plugin for accessing and managing media files (photos & videos) on i
 </p>
 
 ## Features
-- 📸 Retrieve photos & videos from the device gallery
+- 📸 Retrieve **photos** & **videos** from the device gallery
 - 🏷️ Get metadata like filenames, paths, and MIME types
 - 🚀 Works with Capacitor 5, 6, and 7
 - 🔧 Simple API for easy integration
@@ -43,11 +43,13 @@ If you need to explicitly request permissions, you can call:
 
 ```typescript
 const permission = await GalleryPlus.checkPermissions();
+
 if (permission.status !== "granted") {
-  const request = await GalleryPlus.requestPermissions();
-  if (request.status !== "granted") {
-    console.error("Permission denied.");
-  }
+    const request = await GalleryPlus.requestPermissions();
+
+    if (request.status !== "granted") {
+        console.error("Permission denied.");
+    }
 }
 ```
 
@@ -63,12 +65,12 @@ This ensures the app prompts the user for access when needed.
 import { GalleryPlus } from 'capacitor-gallery-plus';
 
 async function getMedia() {
-  try {
-    const result = await GalleryPlus.getMediaFiles();
-    console.log('Media files:', result);
-  } catch (error) {
-    console.error('Error retrieving media:', error);
-  }
+    try {
+        const result = await GalleryPlus.getMedias();
+        console.log('Media files:', result);
+    } catch (error) {
+        console.error('Error retrieving media:', error);
+    }
 }
 ```
 
