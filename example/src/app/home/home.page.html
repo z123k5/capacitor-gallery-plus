@@ -8,24 +8,18 @@
     <ion-button expand="full" (click)="getMediaFiles()">Load Media</ion-button>
 
     <ion-list>
-        <ion-item
-            *ngFor="let media of mediaList"
-            [style.--background]="media.baseColor"
-        >
+        <ion-item *ngFor="let media of mediaList" (click)="showInfo(media)">
             <ion-thumbnail slot="start">
                 <img oading="lazy" [src]="media.fileData" />
             </ion-thumbnail>
             <ion-label>
                 <h2>{{ media.type }}</h2>
-                <p>
-                    {{ media.width }} x {{ media.height }} px / {{
-                    media.createdAt | date:'short' }}
-                </p>
+                <p>{{ media.createdAt | date:'short' }}</p>
             </ion-label>
         </ion-item>
     </ion-list>
+
     <ion-infinite-scroll (ionInfinite)="onIonInfinite($event)" [disabled]="!platform.is('hybrid')">
         <ion-infinite-scroll-content></ion-infinite-scroll-content>
     </ion-infinite-scroll>
-
 </ion-content>

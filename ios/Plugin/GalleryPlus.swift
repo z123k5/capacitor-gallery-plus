@@ -1,6 +1,6 @@
+import Capacitor
 import Foundation
 import Photos
-import Capacitor
 import UIKit
 
 @objc(GalleryPlus)
@@ -23,12 +23,12 @@ public class GalleryPlus: NSObject {
     }
 
     @objc public func requestPermissions(completion: @escaping (String) -> Void) {
-        PHPhotoLibrary.requestAuthorization { status in
+        PHPhotoLibrary.requestAuthorization { _ in
             completion(self.checkPermissions())
         }
     }
 
-    @objc public func getMedias(mediaType: String, limit: Int, startAt: Int, thumbnailSize: Int, sort: String, includeDetails: Bool, includeBaseColor: Bool, generatePath: Bool, filter: String, completion: @escaping ([[String: Any]]) -> Void) {
+    @objc public func getMediaList(mediaType: String, limit: Int, startAt: Int, thumbnailSize: Int, sort: String, includeDetails: Bool, includeBaseColor: Bool, generatePath: Bool, filter: String, completion: @escaping ([[String: Any]]) -> Void) {
         PHPhotoLibrary.requestAuthorization { status in
             if #available(iOS 14, *) {
                 guard status == .authorized || status == .limited else {
@@ -41,7 +41,7 @@ public class GalleryPlus: NSObject {
                     return
                 }
             }
-            
+
             let fetchOptions = PHFetchOptions()
             fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: sort == "oldest")]
 
@@ -52,7 +52,7 @@ public class GalleryPlus: NSObject {
             if mediaType == "video" || mediaType == "all" {
                 predicateArray.append("mediaType == \(PHAssetMediaType.video.rawValue)")
             }
-            
+
             if filter == "panorama" {
                 predicateArray.append("(mediaSubtypes & \(PHAssetMediaSubtype.photoPanorama.rawValue)) != 0")
             } else if filter == "hdr" {
@@ -60,7 +60,7 @@ public class GalleryPlus: NSObject {
             } else if filter == "screenshot" {
                 predicateArray.append("(mediaSubtypes & \(PHAssetMediaSubtype.photoScreenshot.rawValue)) != 0")
             }
-            
+
             if !predicateArray.isEmpty {
                 fetchOptions.predicate = NSPredicate(format: predicateArray.joined(separator: " OR "))
             }
@@ -69,6 +69,7 @@ public class GalleryPlus: NSObject {
             var mediaArray: [[String: Any]] = []
             let imageManager = PHCachingImageManager()
             let targetSize = CGSize(width: thumbnailSize, height: thumbnailSize)
+            let dispatchGroup = DispatchGroup()
             let requestOptions = PHImageRequestOptions()
             requestOptions.isSynchronous = true
             requestOptions.deliveryMode = .highQualityFormat
@@ -79,76 +80,150 @@ public class GalleryPlus: NSObject {
                 var mediaItem: [String: Any] = [
                     "id": asset.localIdentifier,
                     "type": asset.mediaType == .image ? "image" : "video",
-                    "createdAt":   (asset.creationDate?.timeIntervalSince1970 ?? 0) * 1000
+                    "createdAt": (asset.creationDate?.timeIntervalSince1970 ?? 0) * 1000,
+                    "isFavorite": asset.isFavorite,
+                    "isHidden": asset.isHidden,
+                    "mimeType": ImageHelper.getMimeType(for: asset),
+                    "fileSize": ImageHelper.getFileSize(for: asset) as Any
                 ]
+                
+                if let subtype = ImageHelper.getSubtype(for: asset) {
+                    mediaItem["subtype"] = subtype
+                }
 
+                dispatchGroup.enter()
                 imageManager.requestImage(for: asset, targetSize: targetSize, contentMode: .aspectFit, options: requestOptions) { image, _ in
                     if let image = image, let imageData = image.jpegData(compressionQuality: 0.8) {
                         mediaItem["thumbnail"] = imageData.base64EncodedString()
                     }
+                    
+                    dispatchGroup.leave()
                 }
 
                 if includeBaseColor {
+                    dispatchGroup.enter()
+                    
                     imageManager.requestImage(for: asset, targetSize: targetSize, contentMode: .aspectFit, options: requestOptions) { image, _ in
                         if let image = image {
-                            let baseColor = self.getDominantColor(image: image) // Annahme: gibt immer einen String zurück
-                            mediaItem["baseColor"] = baseColor
+                            mediaItem["baseColor"] = ImageHelper.getDominantColor(image: image)
                         }
+                        
+                        dispatchGroup.leave()
                     }
                 }
 
                 if includeDetails {
-                    let resource = PHAssetResource.assetResources(for: asset).first
-                    if let fileSize = resource?.value(forKey: "fileSize") as? Int {
-                        mediaItem["fileSize"] = fileSize
-                    }
-
-                    // Hole die Originalgröße des Bildes
-                    let options = PHImageRequestOptions()
-                    options.isSynchronous = true  // Wichtig, damit wir die Größe sofort bekommen
-
-                    imageManager.requestImageDataAndOrientation(for: asset, options: options) { data, _, _, _ in
-                        if let data = data,
-                        let imageSource = CGImageSourceCreateWithData(data as CFData, nil),
-                        let properties = CGImageSourceCopyPropertiesAtIndex(imageSource, 0, nil) as? [CFString: Any],
-                        let width = properties[kCGImagePropertyPixelWidth] as? Int,
-                        let height = properties[kCGImagePropertyPixelHeight] as? Int {
-                            
-                            mediaItem["width"] = width
-                            mediaItem["height"] = height
-                        }
+                    dispatchGroup.enter()
+                    ImageHelper.getImageSize(for: asset, imageManager: imageManager) { width, height in
+                          if let width = width, let height = height {
+                              mediaItem["width"] = width
+                              mediaItem["height"] = height
+                          }
+                          dispatchGroup.leave()
                     }
                 }
 
                 mediaArray.append(mediaItem)
             }
-            completion(mediaArray)
+            
+            dispatchGroup.notify(queue: .main) {
+                completion(mediaArray)
+            }
         }
     }
-    
-    /// Extracts the dominant color from an image
-    private func getDominantColor(image: UIImage) -> String {
-        guard let cgImage = image.cgImage else { return "#000000" }
 
-        let width = 1
-        let height = 1
-        let colorSpace = CGColorSpaceCreateDeviceRGB()
-        var rawData = [UInt8](repeating: 0, count: 4)
-        let bitmapInfo = CGImageAlphaInfo.premultipliedLast.rawValue
-        let context = CGContext(data: &rawData,
-                                width: width,
-                                height: height,
-                                bitsPerComponent: 8,
-                                bytesPerRow: width * 4,
-                                space: colorSpace,
-                                bitmapInfo: bitmapInfo)
+    @objc public func getMedia(id: String, includeDetails: Bool, includeBaseColor: Bool, generatePath: Bool, completion: @escaping (NSDictionary?) -> Void) {
+        let fetchOptions = PHFetchOptions()
+        fetchOptions.predicate = NSPredicate(format: "localIdentifier == %@", id)
+        let fetchResult = PHAsset.fetchAssets(with: fetchOptions) // dont move up!
 
-        context?.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
 
-        let red = CGFloat(rawData[0]) / 255.0
-        let green = CGFloat(rawData[1]) / 255.0
-        let blue = CGFloat(rawData[2]) / 255.0
+        guard let asset = fetchResult.firstObject else {
+            completion(nil)
+            return
+        }
 
-        return String(format: "#%02X%02X%02X", Int(red * 255), Int(green * 255), Int(blue * 255))
+        var mediaItem: [String: Any] = [
+            "id": asset.localIdentifier,
+            "type": asset.mediaType == .image ? "image" : "video",
+            "createdAt": (asset.creationDate?.timeIntervalSince1970 ?? 0) * 1000,
+            "isFavorite": asset.isFavorite,
+            "isHidden": asset.isHidden,
+            "mimeType":  ImageHelper.getMimeType(for: asset),
+            "fileSize": ImageHelper.getFileSize(for: asset) as Any
+        ]
+        
+        if let subtype = ImageHelper.getSubtype(for: asset) {
+            mediaItem["subtype"] = subtype
+        }
+
+        let dispatchGroup = DispatchGroup()
+        let imageManager = PHImageManager.default()
+
+        if generatePath {
+            if asset.mediaType == .image {
+                dispatchGroup.enter()
+
+                let options = PHImageRequestOptions()
+                options.isSynchronous = true
+                options.deliveryMode = .highQualityFormat
+
+                imageManager.requestImageDataAndOrientation(for: asset, options: options) { data, _, _, _ in
+                    if let data = data {
+                        let tempPath = FileManager.default.temporaryDirectory.appendingPathComponent("\(UUID().uuidString).jpg")
+                        try? data.write(to: tempPath)
+                        mediaItem["path"] = tempPath.absoluteString
+                    }
+                    dispatchGroup.leave()
+                }
+                
+            } else if asset.mediaType == .video {
+                dispatchGroup.enter()
+
+                let options = PHVideoRequestOptions()
+                options.isNetworkAccessAllowed = true
+
+                
+                imageManager.requestAVAsset(forVideo: asset, options: options) { avAsset, _, _ in
+                    if let urlAsset = avAsset as? AVURLAsset {
+                        DispatchQueue.main.async {
+                            mediaItem["path"] = urlAsset.url.absoluteString
+                            dispatchGroup.leave()
+                        }
+                    } else {
+                        dispatchGroup.leave()
+                    }
+                }
+            }
+        }
+
+        if includeDetails {
+            dispatchGroup.enter()
+            
+            ImageHelper.getImageSize(for: asset, imageManager: imageManager) { width, height in
+                  if let width = width, let height = height {
+                      mediaItem["width"] = width
+                      mediaItem["height"] = height
+                  }
+                  dispatchGroup.leave()
+            }
+        }
+
+        if includeBaseColor {
+            dispatchGroup.enter()
+
+            imageManager.requestImage(for: asset, targetSize: CGSize(width: 10, height: 10), contentMode: .aspectFit, options: nil) { image, _ in
+                if let image = image {
+                    mediaItem["baseColor"] = ImageHelper.getDominantColor(image: image)
+                }
+                
+                dispatchGroup.leave()
+            }
+        }
+
+
+        dispatchGroup.notify(queue: .main) {
+            completion(mediaItem as NSDictionary)
+        }
     }
 }

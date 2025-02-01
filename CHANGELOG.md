@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.1.0] - 2025-02-01
+
+### Added
+  - Improved MIME type detection for `getMediaList()` and `getMedia()`
+  - Now properly returns MIME types based on UTI or file extension fallback
+  - More accurate media type detection for images and videos
+  - Example with media detail view
+  - **Media dialog in the example project (`example`)**
+  - Media items are now displayed in an **Ionic Modal/Dialog**
+  - Added support for **Swipe-to-Close-Feature** for improved UX
+  - Enhanced media detail presentation
+
+- **New Enums for better API structure:**
+  - `MediaSubtype` → Defines special media types (`motion_photo`, `panorama`, `hdr`, `screenshot`, etc.)
+  - `MediaFilter` → Allows clear filtering (`all`, `panorama`, `hdr`, `screenshot`)
+
+### Changed
+  - Optimized image size calculation to prevent redundant computations
+
+### Fixed
+- **Improvements in `getMedia` and `getMediaList`**
+  - Ensured asynchronous processing with `DispatchGroup` to guarantee complete data retrieval
+
 ## [0.0.5] - 2025-01-30
 ### Changed
 - Improved example project with better media handling for Web and native platforms.

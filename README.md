@@ -80,9 +80,10 @@ async function getMedia() {
 
 * [`checkPermissions()`](#checkpermissions)
 * [`requestPermissions()`](#requestpermissions)
-* [`getMedias(...)`](#getmedias)
+* [`getMediaList(...)`](#getmedialist)
 * [`getMedia(...)`](#getmedia)
 * [Interfaces](#interfaces)
+* [Enums](#enums)
 
 </docgen-index>
 
@@ -95,6 +96,8 @@ async function getMedia() {
 checkPermissions() => Promise<{ status: string; }>
 ```
 
+Checks the current permissions for accessing media.
+
 **Returns:** <code>Promise&lt;{ status: string; }&gt;</code>
 
 --------------------
@@ -106,44 +109,26 @@ checkPermissions() => Promise<{ status: string; }>
 requestPermissions() => Promise<{ status: string; }>
 ```
 
+Requests the necessary permissions to access media.
+
 **Returns:** <code>Promise&lt;{ status: string; }&gt;</code>
 
 --------------------
 
 
-### getMedias(...)
+### getMediaList(...)
 
 ```typescript
-getMedias(options: { 
-  type?: "image" | "video" | "all"; 
-  limit?: number; 
-  startAt?: number; 
-  thumbnailSize?: number; 
-  sort?: "oldest" | "newest"; 
-  includeDetails?: boolean; 
-  includeBaseColor?: boolean; 
-  generatePath?: boolean; 
-  filter?: "all" | "panorama" | "hdr" | "screenshot"; 
-}) => Promise<{ media: MediaItem[]; }>
+getMediaList(options: GetMediaListOptions) => Promise<{ media: MediaItem[]; }>
 ```
 
-| Param         | Type                                                                                                                   | Description |
-|--------------|------------------------------------------------------------------------------------------------------------------------|-------------|
-| **`type`**   | <code>"image" \| "video" \| "all"</code>                                                                                | The type of media to retrieve. Default is `"all"`. |
-| **`limit`**  | <code>number</code>                                                                                                    | The maximum number of media items to return. |
-| **`startAt`** | <code>number</code>                                                                                                   | The starting index for pagination. |
-| **`thumbnailSize`** | <code>number</code>                                                                                             | The size of the thumbnail in pixels (e.g., `200` for 200x200px). |
-| **`sort`**   | <code>"oldest" \| "newest"</code>                                                                                      | Sort order of the media items. Default is `"newest"`. |
-| **`includeDetails`** | <code>boolean</code>                                                                                           | Whether to include additional details like width, height, and file size. |
-| **`includeBaseColor`** | <code>boolean</code>                                                                                        | Whether to extract and return the dominant color of the image. |
-| **`generatePath`** | <code>boolean</code>                                                                                            | Whether to generate a temporary path to access the media. |
-| **`filter`** | <code>"all" \| "panorama" \| "hdr" \| "screenshot"</code>                                                              | Filters the media based on specific types (e.g., panorama, HDR, or screenshots). Default is `"all"`. |
+Retrieves media items from the device gallery.
 
-**Returns:**  
-A **Promise** resolving to an object containing a list of media items:
-```typescript
-Promise<{ media: MediaItem[] }>
-```
+| Param         | Type                                                                | Description                         |
+| ------------- | ------------------------------------------------------------------- | ----------------------------------- |
+| **`options`** | <code><a href="#getmedialistoptions">GetMediaListOptions</a></code> | - The options for retrieving media. |
+
+**Returns:** <code>Promise&lt;{ media: MediaItem[]; }&gt;</code>
 
 --------------------
 
@@ -151,12 +136,14 @@ Promise<{ media: MediaItem[] }>
 ### getMedia(...)
 
 ```typescript
-getMedia(options: { id: string; includeBaseColor?: boolean; }) => Promise<MediaItem>
+getMedia(options: GetMediaOptions) => Promise<MediaItem>
 ```
 
-| Param         | Type                                                     |
-| ------------- | -------------------------------------------------------- |
-| **`options`** | <code>{ id: string; includeBaseColor?: boolean; }</code> |
+Retrieves details of a specific media item by its ID.
+
+| Param         | Type                                                        |
+| ------------- | ----------------------------------------------------------- |
+| **`options`** | <code><a href="#getmediaoptions">GetMediaOptions</a></code> |
 
 **Returns:** <code>Promise&lt;<a href="#mediaitem">MediaItem</a>&gt;</code>
 
@@ -165,22 +152,76 @@ getMedia(options: { id: string; includeBaseColor?: boolean; }) => Promise<MediaI
 
 ### Interfaces
 
+
 #### MediaItem
 
-| Prop          | Type                            | Description |
-|--------------|--------------------------------|-------------|
-| **id**        | <code>string</code>             | Unique identifier of the media item. |
-| **type**      | <code>'image' \| 'video'</code> | The type of media (image or video). |
-| **createdAt** | <code>number</code> | The Unix timestamp in milliseconds when the media was created. |
-| **thumbnail** | <code>string</code>             | Base64 thumbnail image (if available). |
-| **baseColor** | <code>string</code>             | Dominant color of the image (if requested). |
-| **name**      | <code>string</code>             | Original file name of the media. |
-| **width**     | <code>number</code>             | Width of the media in pixels. |
-| **height**    | <code>number</code>             | Height of the media in pixels. |
-| **fileSize**  | <code>number</code>             | Size of the file in bytes. |
-| **path**      | <code>string</code>             | File path or accessible URI of the media item. |
+| Prop             | Type                                                  | Description                                                            |
+| ---------------- | ----------------------------------------------------- | ---------------------------------------------------------------------- |
+| **`id`**         | <code>string</code>                                   | Unique identifier of the media item.                                   |
+| **`type`**       | <code>'image' \| 'video'</code>                       | The type of media (image or video).                                    |
+| **`createdAt`**  | <code>number</code>                                   | The Unix timestamp in milliseconds when the media was created.         |
+| **`thumbnail`**  | <code>string</code>                                   | Base64-encoded thumbnail image (if available).                         |
+| **`baseColor`**  | <code>string</code>                                   | Dominant color of the image (if requested).                            |
+| **`name`**       | <code>string</code>                                   | Original file name of the media (only applicable for web platforms).   |
+| **`width`**      | <code>number</code>                                   | Width of the media in pixels.                                          |
+| **`height`**     | <code>number</code>                                   | Height of the media in pixels.                                         |
+| **`fileSize`**   | <code>number</code>                                   | Size of the file in bytes.                                             |
+| **`path`**       | <code>string</code>                                   | File path or accessible URI of the media item.                         |
+| **`mimeType`**   | <code>string</code>                                   | The MIME type of the media item (e.g., "image/jpeg", "video/mp4").     |
+| **`isFavorite`** | <code>boolean</code>                                  | Indicates whether the media item is marked as a favorite. **iOS-only** |
+| **`isHidden`**   | <code>boolean</code>                                  | Indicates whether the media item is hidden. **iOS-only**               |
+| **`subtype`**    | <code><a href="#mediasubtype">MediaSubtype</a></code> | The subtype of the media, indicating special properties                |
 
 
+#### GetMediaListOptions
+
+| Prop                   | Type                                                | Description                                                                                                                            | Default               |
+| ---------------------- | --------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
+| **`type`**             | <code>'image' \| 'video' \| 'all'</code>            | The type of media to retrieve. Default is `"all"`. - `"image"`: Only images - `"video"`: Only videos - `"all"`: Both images and videos | <code>"all"</code>    |
+| **`limit`**            | <code>number</code>                                 | The maximum number of media items to return.                                                                                           |                       |
+| **`startAt`**          | <code>number</code>                                 | The starting index for pagination.                                                                                                     |                       |
+| **`thumbnailSize`**    | <code>number</code>                                 | The size of the thumbnail in pixels. Example: `200` for 200x200px.                                                                     |                       |
+| **`sort`**             | <code>'oldest' \| 'newest'</code>                   | Sort order of the media items. - `"oldest"`: Oldest first - `"newest"`: Newest first                                                   | <code>"newest"</code> |
+| **`includeDetails`**   | <code>boolean</code>                                | Whether to include additional details like width, height, and file size.                                                               |                       |
+| **`includeBaseColor`** | <code>boolean</code>                                | Whether to extract and return the dominant color of the image.                                                                         |                       |
+| **`generatePath`**     | <code>boolean</code>                                | Whether to generate a temporary path to access the media.                                                                              |                       |
+| **`filter`**           | <code><a href="#mediafilter">MediaFilter</a></code> | Filter applied to the media selection                                                                                                  |                       |
+
+
+#### GetMediaOptions
+
+| Prop                   | Type                 | Description                                                                  | Default            |
+| ---------------------- | -------------------- | ---------------------------------------------------------------------------- | ------------------ |
+| **`id`**               | <code>string</code>  | The unique identifier of the media item.                                     |                    |
+| **`includeDetails`**   | <code>boolean</code> | Whether to include additional metadata such as width, height, and file size. | <code>false</code> |
+| **`includeBaseColor`** | <code>boolean</code> | Whether to extract and return the dominant color of the image.               | <code>false</code> |
+| **`generatePath`**     | <code>boolean</code> | Whether to generate a temporary path to access the media.                    | <code>false</code> |
+
+
+### Enums
+
+
+#### MediaSubtype
+
+| Members           | Value                       | Description                                  |
+| ----------------- | --------------------------- | -------------------------------------------- |
+| **`MotionPhoto`** | <code>"motion_photo"</code> | A Live Photo (iOS) or Motion Photo (Android) |
+| **`Panorama`**    | <code>"panorama"</code>     | A panorama image                             |
+| **`HDR`**         | <code>"hdr"</code>          | A high dynamic range (HDR) image             |
+| **`Screenshot`**  | <code>"screenshot"</code>   | A screenshot                                 |
+| **`Portrait`**    | <code>"portrait"</code>     | A photo with depth effect (bokeh)            |
+| **`SlowMotion`**  | <code>"slow_motion"</code>  | A high frame rate slow-motion video          |
+| **`Timelapse`**   | <code>"timelapse"</code>    | A time-lapse video                           |
+
+
+#### MediaFilter
+
+| Members          | Value                     | Description                     |
+| ---------------- | ------------------------- | ------------------------------- |
+| **`All`**        | <code>"all"</code>        | No filtering, returns all media |
+| **`Panorama`**   | <code>"panorama"</code>   | Only return panoramic images    |
+| **`HDR`**        | <code>"hdr"</code>        | Only return HDR images          |
+| **`Screenshot`** | <code>"screenshot"</code> | Only return screenshots         |
 
 </docgen-api>
 

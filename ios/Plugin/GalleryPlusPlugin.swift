@@ -5,18 +5,18 @@ import Capacitor
 public class GalleryPlusPlugin: CAPPlugin {
     private let gallery = GalleryPlus() // Instanz der Helper-Klasse
 
-    @objc public override func checkPermissions(_ call: CAPPluginCall) {
+    @objc override public func checkPermissions(_ call: CAPPluginCall) {
         let status = gallery.checkPermissions()
         call.resolve(["status": status])
     }
 
-    @objc public override func requestPermissions(_ call: CAPPluginCall) {
+    @objc override public func requestPermissions(_ call: CAPPluginCall) {
         gallery.requestPermissions { status in
             call.resolve(["status": status])
         }
     }
 
-    @objc func getMedias(_ call: CAPPluginCall) {
+    @objc func getMediaList(_ call: CAPPluginCall) {
         let mediaType = call.getString("type") ?? "all"
         let limit = call.getInt("limit") ?? 50
         let startAt = call.getInt("startAt") ?? 0
@@ -27,7 +27,7 @@ public class GalleryPlusPlugin: CAPPlugin {
         let generatePath = call.getBool("generatePath") ?? false
         let filter = call.getString("filter") ?? "all"
 
-        gallery.getMedias(
+        gallery.getMediaList(
             mediaType: mediaType,
             limit: limit,
             startAt: startAt,
@@ -39,6 +39,25 @@ public class GalleryPlusPlugin: CAPPlugin {
             filter: filter
         ) { mediaArray in
             call.resolve(["media": mediaArray])
+        }
+    }
+
+    @objc func getMedia(_ call: CAPPluginCall) {
+        guard let id = call.getString("id") else {
+            call.reject("Media ID is required")
+            return
+        }
+
+        let includeDetails = call.getBool("includeDetails") ?? false
+        let includeBaseColor = call.getBool("includeBaseColor") ?? false
+        let generatePath = call.getBool("generatePath") ?? false
+
+        gallery.getMedia(id: id, includeDetails: includeDetails, includeBaseColor: includeBaseColor, generatePath: generatePath) { mediaItem in
+            if let mediaItem = mediaItem {
+                call.resolve(mediaItem as! [String: Any])
+            } else {
+                call.reject("Media not found")
+            }
         }
     }
 }
