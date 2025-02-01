@@ -155,22 +155,22 @@ Retrieves details of a specific media item by its ID.
 
 #### MediaItem
 
-| Prop             | Type                                                  | Description                                                            |
-| ---------------- | ----------------------------------------------------- | ---------------------------------------------------------------------- |
-| **`id`**         | <code>string</code>                                   | Unique identifier of the media item.                                   |
-| **`type`**       | <code>'image' \| 'video'</code>                       | The type of media (image or video).                                    |
-| **`createdAt`**  | <code>number</code>                                   | The Unix timestamp in milliseconds when the media was created.         |
-| **`thumbnail`**  | <code>string</code>                                   | Base64-encoded thumbnail image (if available).                         |
-| **`baseColor`**  | <code>string</code>                                   | Dominant color of the image (if requested).                            |
-| **`name`**       | <code>string</code>                                   | Original file name of the media (only applicable for web platforms).   |
-| **`width`**      | <code>number</code>                                   | Width of the media in pixels.                                          |
-| **`height`**     | <code>number</code>                                   | Height of the media in pixels.                                         |
-| **`fileSize`**   | <code>number</code>                                   | Size of the file in bytes.                                             |
-| **`path`**       | <code>string</code>                                   | File path or accessible URI of the media item.                         |
-| **`mimeType`**   | <code>string</code>                                   | The MIME type of the media item (e.g., "image/jpeg", "video/mp4").     |
-| **`isFavorite`** | <code>boolean</code>                                  | Indicates whether the media item is marked as a favorite. **iOS-only** |
-| **`isHidden`**   | <code>boolean</code>                                  | Indicates whether the media item is hidden. **iOS-only**               |
-| **`subtype`**    | <code><a href="#mediasubtype">MediaSubtype</a></code> | The subtype of the media, indicating special properties                |
+| Prop             | Type                                                  | Description                                                          |
+| ---------------- | ----------------------------------------------------- | -------------------------------------------------------------------- |
+| **`id`**         | <code>string</code>                                   | Unique identifier of the media item.                                 |
+| **`type`**       | <code>'image' \| 'video'</code>                       | The type of media (image or video).                                  |
+| **`createdAt`**  | <code>number</code>                                   | The Unix timestamp in milliseconds when the media was created.       |
+| **`thumbnail`**  | <code>string</code>                                   | Base64-encoded thumbnail image (if available).                       |
+| **`baseColor`**  | <code>string</code>                                   | Dominant color of the image (if requested).                          |
+| **`name`**       | <code>string</code>                                   | Original file name of the media (only applicable for web platforms). |
+| **`width`**      | <code>number</code>                                   | Width of the media in pixels.                                        |
+| **`height`**     | <code>number</code>                                   | Height of the media in pixels.                                       |
+| **`fileSize`**   | <code>number</code>                                   | Size of the file in bytes.                                           |
+| **`path`**       | <code>string</code>                                   | File path or accessible URI of the media item.                       |
+| **`mimeType`**   | <code>string</code>                                   | The MIME type of the media item (e.g., "image/jpeg", "video/mp4").   |
+| **`isFavorite`** | <code>boolean</code>                                  | Indicates whether the media item is marked as a favorite. (iOS-only) |
+| **`isHidden`**   | <code>boolean</code>                                  | Indicates whether the media item is hidden. (iOS-only)               |
+| **`subtype`**    | <code><a href="#mediasubtype">MediaSubtype</a></code> | The subtype of the media, indicating special properties              |
 
 
 #### GetMediaListOptions
@@ -182,7 +182,7 @@ Retrieves details of a specific media item by its ID.
 | **`startAt`**          | <code>number</code>                                 | The starting index for pagination.                                                                                                     |                       |
 | **`thumbnailSize`**    | <code>number</code>                                 | The size of the thumbnail in pixels. Example: `200` for 200x200px.                                                                     |                       |
 | **`sort`**             | <code>'oldest' \| 'newest'</code>                   | Sort order of the media items. - `"oldest"`: Oldest first - `"newest"`: Newest first                                                   | <code>"newest"</code> |
-| **`includeDetails`**   | <code>boolean</code>                                | Whether to include additional details like width, height, and file size.                                                               |                       |
+| **`includeDetails`**   | <code>boolean</code>                                | Whether to include additional details like width, height.                                                                              |                       |
 | **`includeBaseColor`** | <code>boolean</code>                                | Whether to extract and return the dominant color of the image.                                                                         |                       |
 | **`generatePath`**     | <code>boolean</code>                                | Whether to generate a temporary path to access the media.                                                                              |                       |
 | **`filter`**           | <code><a href="#mediafilter">MediaFilter</a></code> | Filter applied to the media selection                                                                                                  |                       |

@@ -70,7 +70,7 @@ export interface GetMediaListOptions {
     sort?: 'oldest' | 'newest';
 
     /**
-     * Whether to include additional details like width, height, and file size.
+     * Whether to include additional details like width, height.
      */
     includeDetails?: boolean;
 
@@ -189,13 +189,13 @@ export interface MediaItem {
 
     /**
      * Indicates whether the media item is marked as a favorite.
-     * **iOS-only**
+     * (iOS-only)
      */
     isFavorite?: boolean;
 
     /**
      * Indicates whether the media item is hidden.
-     * **iOS-only** 
+     * (iOS-only)
      */
     isHidden?: boolean;
 
