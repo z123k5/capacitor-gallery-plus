@@ -53,6 +53,7 @@ export class GalleryPlusWeb extends WebPlugin implements GalleryPlusPlugin {
                     ) {
                         const mediaItem: MediaItem = {
                             id: file.name,
+                            name: file.name,
                             type: file.type.startsWith('image/')
                                 ? 'image'
                                 : 'video',
