@@ -66,8 +66,8 @@ import { GalleryPlus } from 'capacitor-gallery-plus';
 
 async function getMedia() {
     try {
-        const result = await GalleryPlus.getMedias();
-        console.log('Media files:', result);
+        const result = await GalleryPlus.getMediaList({});
+        console.log('Media files:', result.media);
     } catch (error) {
         console.error('Error retrieving media:', error);
     }
