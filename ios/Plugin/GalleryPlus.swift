@@ -2,6 +2,8 @@ import Capacitor
 import Foundation
 import Photos
 import UIKit
+import SDWebImage
+import SDWebImageWebPCoder
 
 @objc(GalleryPlus)
 public class GalleryPlus: NSObject {
@@ -28,7 +30,7 @@ public class GalleryPlus: NSObject {
         }
     }
 
-    @objc public func getMediaList(mediaType: String, limit: Int, startAt: Int, thumbnailSize: Int, sort: String, includeDetails: Bool, includeBaseColor: Bool, generatePath: Bool, filter: String, completion: @escaping ([[String: Any]]) -> Void) {
+    @objc public func getMediaList(mediaType: String, limit: Int, startAt: Int, thumbnailSize: Int, sort: String, includeDetails: Bool, includeBaseColor: Bool, filter: String, completion: @escaping ([[String: Any]]) -> Void) {
         PHPhotoLibrary.requestAuthorization { status in
             if #available(iOS 14, *) {
                 guard status == .authorized || status == .limited else {
@@ -75,55 +77,64 @@ public class GalleryPlus: NSObject {
             requestOptions.deliveryMode = .highQualityFormat
 
             let count = min(assets.count, startAt + limit)
-            for index in startAt..<count {
-                let asset = assets.object(at: index)
-                var mediaItem: [String: Any] = [
-                    "id": asset.localIdentifier,
-                    "type": asset.mediaType == .image ? "image" : "video",
-                    "createdAt": (asset.creationDate?.timeIntervalSince1970 ?? 0) * 1000,
-                    "isFavorite": asset.isFavorite,
-                    "isHidden": asset.isHidden,
-                    "mimeType": ImageHelper.getMimeType(for: asset),
-                    "fileSize": ImageHelper.getFileSize(for: asset) as Any
-                ]
-                
-                if let subtype = ImageHelper.getSubtype(for: asset) {
-                    mediaItem["subtype"] = subtype
-                }
 
-                dispatchGroup.enter()
-                imageManager.requestImage(for: asset, targetSize: targetSize, contentMode: .aspectFit, options: requestOptions) { image, _ in
-                    if let image = image, let imageData = image.jpegData(compressionQuality: 0.8) {
-                        mediaItem["thumbnail"] = imageData.base64EncodedString()
+            if startAt < count {
+                for index in startAt..<count {
+                    let asset = assets.object(at: index)
+                    var mediaItem: [String: Any] = [
+                        "id": asset.localIdentifier,
+                        "type": asset.mediaType == .image ? "image" : "video",
+                        "createdAt": (asset.creationDate?.timeIntervalSince1970 ?? 0) * 1000,
+                        "isFavorite": asset.isFavorite,
+                        "isHidden": asset.isHidden,
+                        "mimeType": ImageHelper.getMimeType(for: asset),
+                        "fileSize": ImageHelper.getFileSize(for: asset) as Any
+                    ]
+                    
+                    if let subtype = ImageHelper.getSubtype(for: asset) {
+                        mediaItem["subtype"] = subtype
                     }
-                    
-                    dispatchGroup.leave()
-                }
 
-                if includeBaseColor {
                     dispatchGroup.enter()
-                    
                     imageManager.requestImage(for: asset, targetSize: targetSize, contentMode: .aspectFit, options: requestOptions) { image, _ in
-                        if let image = image {
-                            mediaItem["baseColor"] = ImageHelper.getDominantColor(image: image)
+                        if let image = image, let imageData = image.jpegData(compressionQuality: 0.8) {
+                            let tempPath = FileManager.default.temporaryDirectory.appendingPathComponent("\(UUID().uuidString).jpg")
+                            do {
+                                try imageData.write(to: tempPath)
+                                mediaItem["thumbnail"] = tempPath.absoluteString 
+                            } catch {
+                                mediaItem["thumbnail"] = nil
+                            }
                         }
                         
                         dispatchGroup.leave()
                     }
-                }
 
-                if includeDetails {
-                    dispatchGroup.enter()
-                    ImageHelper.getImageSize(for: asset, imageManager: imageManager) { width, height in
-                          if let width = width, let height = height {
-                              mediaItem["width"] = width
-                              mediaItem["height"] = height
-                          }
-                          dispatchGroup.leave()
+                    if includeBaseColor {
+                        dispatchGroup.enter()
+                        
+                        imageManager.requestImage(for: asset, targetSize: targetSize, contentMode: .aspectFit, options: requestOptions) { image, _ in
+                            if let image = image {
+                                mediaItem["baseColor"] = ImageHelper.getDominantColor(image: image)
+                            }
+                            
+                            dispatchGroup.leave()
+                        }
                     }
-                }
 
-                mediaArray.append(mediaItem)
+                    if includeDetails {
+                        dispatchGroup.enter()
+                        ImageHelper.getImageSize(for: asset, imageManager: imageManager) { width, height in
+                            if let width = width, let height = height {
+                                mediaItem["width"] = width
+                                mediaItem["height"] = height
+                            }
+                            dispatchGroup.leave()
+                        }
+                    }
+
+                    mediaArray.append(mediaItem)
+                }
             }
             
             dispatchGroup.notify(queue: .main) {
@@ -132,7 +143,7 @@ public class GalleryPlus: NSObject {
         }
     }
 
-    @objc public func getMedia(id: String, includeDetails: Bool, includeBaseColor: Bool, generatePath: Bool, completion: @escaping (NSDictionary?) -> Void) {
+    @objc public func getMedia(id: String, includeDetails: Bool, includeBaseColor: Bool, path: Bool, completion: @escaping (NSDictionary?) -> Void) {
         let fetchOptions = PHFetchOptions()
         fetchOptions.predicate = NSPredicate(format: "localIdentifier == %@", id)
         let fetchResult = PHAsset.fetchAssets(with: fetchOptions) // dont move up!
@@ -160,7 +171,7 @@ public class GalleryPlus: NSObject {
         let dispatchGroup = DispatchGroup()
         let imageManager = PHImageManager.default()
 
-        if generatePath {
+        if path {
             if asset.mediaType == .image {
                 dispatchGroup.enter()
 

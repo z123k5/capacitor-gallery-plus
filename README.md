@@ -136,7 +136,7 @@ Retrieves media items from the device gallery.
 ### getMedia(...)
 
 ```typescript
-getMedia(options: GetMediaOptions) => Promise<MediaItem>
+getMedia(options: GetMediaOptions) => Promise<FullMediaItem>
 ```
 
 Retrieves details of a specific media item by its ID.
@@ -145,7 +145,7 @@ Retrieves details of a specific media item by its ID.
 | ------------- | ----------------------------------------------------------- |
 | **`options`** | <code><a href="#getmediaoptions">GetMediaOptions</a></code> |
 
-**Returns:** <code>Promise&lt;<a href="#mediaitem">MediaItem</a>&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#fullmediaitem">FullMediaItem</a>&gt;</code>
 
 --------------------
 
@@ -160,13 +160,12 @@ Retrieves details of a specific media item by its ID.
 | **`id`**         | <code>string</code>                                   | Unique identifier of the media item.                                 |
 | **`type`**       | <code>'image' \| 'video'</code>                       | The type of media (image or video).                                  |
 | **`createdAt`**  | <code>number</code>                                   | The Unix timestamp in milliseconds when the media was created.       |
-| **`thumbnail`**  | <code>string</code>                                   | Base64-encoded thumbnail image (if available).                       |
-| **`baseColor`**  | <code>string</code>                                   | Dominant color of the image (if requested).                          |
+| **`thumbnail`**  | <code>string</code>                                   | Base64-encoded thumbnail image (only in `getMediaList`).             |
+| **`baseColor`**  | <code>string</code>                                   | Dominant color of the image (requires `includeBaseColor`).           |
 | **`name`**       | <code>string</code>                                   | Original file name of the media (only applicable for web platforms). |
-| **`width`**      | <code>number</code>                                   | Width of the media in pixels.                                        |
-| **`height`**     | <code>number</code>                                   | Height of the media in pixels.                                       |
+| **`width`**      | <code>number</code>                                   | Width of the media in pixels (requires `includeDetails`).            |
+| **`height`**     | <code>number</code>                                   | Height of the media in pixels (requires `includeDetails`).           |
 | **`fileSize`**   | <code>number</code>                                   | Size of the file in bytes.                                           |
-| **`path`**       | <code>string</code>                                   | File path or accessible URI of the media item.                       |
 | **`mimeType`**   | <code>string</code>                                   | The MIME type of the media item (e.g., "image/jpeg", "video/mp4").   |
 | **`isFavorite`** | <code>boolean</code>                                  | Indicates whether the media item is marked as a favorite. (iOS-only) |
 | **`isHidden`**   | <code>boolean</code>                                  | Indicates whether the media item is hidden. (iOS-only)               |
@@ -184,18 +183,28 @@ Retrieves details of a specific media item by its ID.
 | **`sort`**             | <code>'oldest' \| 'newest'</code>                   | Sort order of the media items. - `"oldest"`: Oldest first - `"newest"`: Newest first                                                   | <code>"newest"</code> |
 | **`includeDetails`**   | <code>boolean</code>                                | Whether to include additional details like width, height.                                                                              |                       |
 | **`includeBaseColor`** | <code>boolean</code>                                | Whether to extract and return the dominant color of the image.                                                                         |                       |
-| **`generatePath`**     | <code>boolean</code>                                | Whether to generate a temporary path to access the media.                                                                              |                       |
 | **`filter`**           | <code><a href="#mediafilter">MediaFilter</a></code> | Filter applied to the media selection                                                                                                  |                       |
+
+
+#### FullMediaItem
+
+| Prop                | Type                | Description                                                                                                              |
+| ------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| **`path`**          | <code>string</code> | File path or accessible URI of the media item (only in `getMedia` with `path` enabled). Only available on iOS & Android. |
+| **`convertedPath`** | <code>string</code> | A converted version of the media file (JPEG for images, MP4 for videos). Only available on iOS & Android.                |
+| **`motionPath`**    | <code>string</code> | The motion path for Live Photos or Motion Photos. Only available on iOS & Android.                                       |
 
 
 #### GetMediaOptions
 
-| Prop                   | Type                 | Description                                                                  | Default            |
-| ---------------------- | -------------------- | ---------------------------------------------------------------------------- | ------------------ |
-| **`id`**               | <code>string</code>  | The unique identifier of the media item.                                     |                    |
-| **`includeDetails`**   | <code>boolean</code> | Whether to include additional metadata such as width, height, and file size. | <code>false</code> |
-| **`includeBaseColor`** | <code>boolean</code> | Whether to extract and return the dominant color of the image.               | <code>false</code> |
-| **`generatePath`**     | <code>boolean</code> | Whether to generate a temporary path to access the media.                    | <code>false</code> |
+| Prop                   | Type                 | Description                                                                                          | Default            |
+| ---------------------- | -------------------- | ---------------------------------------------------------------------------------------------------- | ------------------ |
+| **`id`**               | <code>string</code>  | The unique identifier of the media item.                                                             |                    |
+| **`includeDetails`**   | <code>boolean</code> | Whether to include additional metadata such as width, height, and file size.                         | <code>false</code> |
+| **`includeBaseColor`** | <code>boolean</code> | Whether to extract and return the dominant color of the image.                                       | <code>false</code> |
+| **`path`**             | <code>boolean</code> | Whether to generate a temporary path to access the original media.                                   | <code>false</code> |
+| **`convertedPath`**    | <code>boolean</code> | Whether to generate a converted path (JPEG for images, MP4 for videos).                              | <code>false</code> |
+| **`motionPath`**       | <code>boolean</code> | Whether to generate a motion path for Live Photos or Motion Photos. Only available on iOS & Android. | <code>false</code> |
 
 
 ### Enums

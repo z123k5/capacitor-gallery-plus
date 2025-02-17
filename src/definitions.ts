@@ -27,7 +27,7 @@ export interface GalleryPlusPlugin {
      * Retrieves details of a specific media item by its ID.
      * @returns {Promise<MediaItem>} A promise resolving to a media item object.
      */
-    getMedia(options: GetMediaOptions): Promise<MediaItem>;
+    getMedia(options: GetMediaOptions): Promise<FullMediaItem>;
 }
 
 export interface GetMediaListOptions {
@@ -79,11 +79,6 @@ export interface GetMediaListOptions {
      */
     includeBaseColor?: boolean;
 
-    /**
-     * Whether to generate a temporary path to access the media.
-     */
-    generatePath?: boolean;
-
     /** Filter applied to the media selection */
     filter?: MediaFilter;
 }
@@ -124,10 +119,44 @@ export interface GetMediaOptions {
     includeBaseColor?: boolean;
 
     /**
-     * Whether to generate a temporary path to access the media.
+     * Whether to generate a temporary path to access the original media.
      * @default false
      */
-    generatePath?: boolean;
+    path?: boolean;
+
+    /**
+     * Whether to generate a converted path (JPEG for images, MP4 for videos).
+     * @default false
+     */
+    convertedPath?: boolean;
+
+    /**
+     * Whether to generate a motion path for Live Photos or Motion Photos.
+     * Only available on iOS & Android.
+     * @default false
+     */
+    motionPath?: boolean;
+}
+
+export interface FullMediaItem extends MediaItem {
+    /**
+     * File path or accessible URI of the media item (only in `getMedia` with `path` enabled).
+     * Only available on iOS & Android.
+     */
+    path?: string;
+
+
+    /**
+     * A converted version of the media file (JPEG for images, MP4 for videos).
+     * Only available on iOS & Android.
+     */
+    convertedPath?: string;
+
+    /**
+     * The motion path for Live Photos or Motion Photos.
+     * Only available on iOS & Android.
+     */
+    motionPath?: string;
 }
 
 export interface MediaItem {
@@ -147,12 +176,12 @@ export interface MediaItem {
     createdAt: number;
 
     /**
-     * Base64-encoded thumbnail image (if available).
+     * Base64-encoded thumbnail image (only in `getMediaList`).
      */
     thumbnail?: string;
 
     /**
-     * Dominant color of the image (if requested).
+     * Dominant color of the image (requires `includeBaseColor`).
      */
     baseColor?: string;
 
@@ -162,12 +191,12 @@ export interface MediaItem {
     name?: string;
 
     /**
-     * Width of the media in pixels.
+     * Width of the media in pixels (requires `includeDetails`).
      */
     width?: number;
 
     /**
-     * Height of the media in pixels.
+     * Height of the media in pixels (requires `includeDetails`).
      */
     height?: number;
 
@@ -175,11 +204,6 @@ export interface MediaItem {
      * Size of the file in bytes.
      */
     fileSize?: number;
-
-    /**
-     * File path or accessible URI of the media item.
-     */
-    path?: string;
 
     /**
      * The MIME type of the media item (e.g., "image/jpeg", "video/mp4").

@@ -1,9 +1,16 @@
 import Foundation
 import Capacitor
+import SDWebImage
+import SDWebImageWebPCoder
 
 @objc(GalleryPlusPlugin)
 public class GalleryPlusPlugin: CAPPlugin {
     private let gallery = GalleryPlus() // Instanz der Helper-Klasse
+
+    public override func load() {
+        super.load()
+        SDImageCodersManager.shared.addCoder(SDImageWebPCoder.shared)
+    }
 
     @objc override public func checkPermissions(_ call: CAPPluginCall) {
         let status = gallery.checkPermissions()
@@ -24,7 +31,6 @@ public class GalleryPlusPlugin: CAPPlugin {
         let sort = call.getString("sort") ?? "newest"
         let includeDetails = call.getBool("includeDetails") ?? false
         let includeBaseColor = call.getBool("includeBaseColor") ?? false
-        let generatePath = call.getBool("generatePath") ?? false
         let filter = call.getString("filter") ?? "all"
 
         gallery.getMediaList(
@@ -35,7 +41,6 @@ public class GalleryPlusPlugin: CAPPlugin {
             sort: sort,
             includeDetails: includeDetails,
             includeBaseColor: includeBaseColor,
-            generatePath: generatePath,
             filter: filter
         ) { mediaArray in
             call.resolve(["media": mediaArray])
@@ -50,9 +55,9 @@ public class GalleryPlusPlugin: CAPPlugin {
 
         let includeDetails = call.getBool("includeDetails") ?? false
         let includeBaseColor = call.getBool("includeBaseColor") ?? false
-        let generatePath = call.getBool("generatePath") ?? false
+        let path = call.getBool("path") ?? false
 
-        gallery.getMedia(id: id, includeDetails: includeDetails, includeBaseColor: includeBaseColor, generatePath: generatePath) { mediaItem in
+        gallery.getMedia(id: id, includeDetails: includeDetails, includeBaseColor: includeBaseColor, path: path) { mediaItem in
             if let mediaItem = mediaItem {
                 call.resolve(mediaItem as! [String: Any])
             } else {
