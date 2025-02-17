@@ -2,4 +2,17 @@
     ion-thumbnail {
         background: white;
     }
+
+    ion-label {
+        p {
+            vertical-align: middle;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+    }
+
+    ion-note {
+        font-size: 13px;
+    }
 }

@@ -1,13 +1,11 @@
 import { Component } from '@angular/core';
 
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
 import { InfiniteScrollCustomEvent, ModalController, Platform } from '@ionic/angular';
 import { GalleryPlus, MediaItem } from 'capacitor-gallery-plus';
-import { MEDIA_MODAL_DATA, MediaInfoModalComponent } from '../components/media-info-modal/media-info-modal.component';
+import { MediaInfoModalComponent } from '../components/media-info-modal/media-info-modal.component';
+import { Capacitor } from '@capacitor/core';
 
-export interface IMediaItemWeb extends MediaItem {
-    fileData?: string | SafeUrl;
-}
 
 @Component({
     selector: 'app-home',
@@ -16,9 +14,10 @@ export interface IMediaItemWeb extends MediaItem {
     styleUrls: ['./home.page.scss']
 })
 export class HomePage {
-    mediaList:  IMediaItemWeb[]= [];
+    mediaList:  MediaItem[]= [];
     start = 0;
     limit = 15;
+    readonly isWeb = !this.platform.is('hybrid');
 
     constructor(
         public platform: Platform,
@@ -38,7 +37,6 @@ export class HomePage {
                 }
             }
 
-
             const mediaResult = await GalleryPlus.getMediaList({
                 type: 'all',
                 startAt,
@@ -49,28 +47,22 @@ export class HomePage {
                 thumbnailSize: 200
             });
 
-            const mappedResult = mediaResult.media.map((media) => {
-                if (media.thumbnail) {
+            const mappedMedia = mediaResult.media.map(entry => {
+
+                if (!this.isWeb) {
                     return {
-                        ...media,
-                        fileData: `data:image/jpeg;base64,${media.thumbnail}`
-                    };
-                } else if (media.path) {
-                    return {
-                        ...media,
-                        fileData: this.sanitizer.bypassSecurityTrustUrl(
-                            media.path
-                        )
-                    };
+                        ...entry,
+                        thumbnail: Capacitor.convertFileSrc(entry.thumbnail as string)
+                    }
                 }
 
-                return media;
-            });
+                return entry;
+            })
 
             if (startAt === 0) {
-                this.mediaList = mappedResult;
+                this.mediaList = mappedMedia;
             } else {
-                this.mediaList = [...this.mediaList, ...mappedResult];
+                this.mediaList = [...this.mediaList, ...mappedMedia];
             }
 
             console.log('MEDIA LIST', this.mediaList);
@@ -91,7 +83,7 @@ export class HomePage {
             id: media.id,
             includeBaseColor: true,
             includeDetails: true,
-            generatePath: true
+            path: true
         });
 
         const modal = await this.modalController.create({
