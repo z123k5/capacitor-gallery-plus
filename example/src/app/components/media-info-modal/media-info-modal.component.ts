@@ -1,7 +1,7 @@
 import { Component, Inject, InjectionToken, Input } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { ModalController } from '@ionic/angular';
-import { MediaItem } from 'capacitor-gallery-plus';
+import { FullMediaItem, MediaItem } from 'capacitor-gallery-plus';
 
 export const MEDIA_MODAL_DATA = new InjectionToken<MediaItem>('MEDIA_MODAL_DATA');
 
@@ -12,7 +12,7 @@ export const MEDIA_MODAL_DATA = new InjectionToken<MediaItem>('MEDIA_MODAL_DATA'
     styleUrls: ['./media-info-modal.component.scss']
 })
 export class MediaInfoModalComponent {
-    @Input() media!: MediaItem;
+    @Input() media!: FullMediaItem;
 
     constructor(
         private modalController: ModalController

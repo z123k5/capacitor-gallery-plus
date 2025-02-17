@@ -3,4 +3,14 @@
     video {
         width: 100%;
     }
+
+    .base-color {
+
+        width: 25px;
+        height: 25px;
+        display: inline-block;
+        border: 1px solid grey;
+        vertical-align: middle;
+        margin: 0 0 0 5px;
+    }
 }

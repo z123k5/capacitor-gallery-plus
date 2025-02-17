@@ -17,10 +17,13 @@
             <ion-label><strong>Height:</strong> {{ media.height || 'Unknown' }} px</ion-label>
         </ion-item>
         <ion-item>
-            <ion-label><strong>File Size:</strong> {{ media.fileSize }} bytes</ion-label>
+            <ion-label><strong>File Size:</strong> {{ media.fileSize || 0 | fileSize }}</ion-label>
         </ion-item>
         <ion-item>
             <ion-label><strong>MIME Type:</strong> {{ media.mimeType || 'Unknown' }}</ion-label>
+        </ion-item>
+        <ion-item>
+            <ion-label><strong>Base-Color:</strong> <span class="base-color" [style.backgroundColor]="media.baseColor"></span> {{ media.baseColor }}</ion-label>
         </ion-item>
         <ion-item>
             <ion-label>

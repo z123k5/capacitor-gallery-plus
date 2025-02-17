@@ -6,9 +6,10 @@ import { HomePage } from './home.page';
 
 import { HomePageRoutingModule } from './home-routing.module';
 import { MediaInfoModalComponent } from '../components/media-info-modal/media-info-modal.component';
+import { FileSizePipe } from '../pipes/filesize.pipe';
 
 @NgModule({
     imports: [CommonModule, FormsModule, IonicModule, HomePageRoutingModule],
-    declarations: [HomePage, MediaInfoModalComponent]
+    declarations: [HomePage, MediaInfoModalComponent, FileSizePipe]
 })
 export class HomePageModule {}
