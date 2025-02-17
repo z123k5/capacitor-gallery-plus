@@ -11,10 +11,11 @@
     </ion-button>
 
     <ion-list>
-        <ion-item *ngFor="let media of mediaList" (click)="showInfo(media)">
+        <ion-item *ngFor="let media of mediaList" (click)="showInfo(media)" [button]="true">
             <ion-thumbnail slot="start">
                 <img oading="lazy" [src]="media.thumbnail" />
             </ion-thumbnail>
+
             <ion-label>
                 <h3>{{media.mimeType}}</h3>
                 <p><ion-icon name="calendar-outline"></ion-icon> {{ media.createdAt | date:'short' }}</p>
