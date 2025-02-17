@@ -188,11 +188,13 @@ Retrieves details of a specific media item by its ID.
 
 #### FullMediaItem
 
-| Prop                | Type                | Description                                                                                                              |
-| ------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| **`path`**          | <code>string</code> | File path or accessible URI of the media item (only in `getMedia` with `path` enabled). Only available on iOS & Android. |
-| **`convertedPath`** | <code>string</code> | A converted version of the media file (JPEG for images, MP4 for videos). Only available on iOS & Android.                |
-| **`motionPath`**    | <code>string</code> | The motion path for Live Photos or Motion Photos. Only available on iOS & Android.                                       |
+An extended version of <a href="#mediaitem">`MediaItem`</a> returned by `getMedia`.
+
+| Prop                | Type                | Description                                                                                               |
+| ------------------- | ------------------- | --------------------------------------------------------------------------------------------------------- |
+| **`path`**          | <code>string</code> | File path or accessible URI of the media item.                                                            |
+| **`convertedPath`** | <code>string</code> | A converted version of the media file (JPEG for images, MP4 for videos). Only available on iOS & Android. |
+| **`motionPath`**    | <code>string</code> | The motion path for Live Photos or Motion Photos. Only available on iOS & Android.                        |
 
 
 #### GetMediaOptions

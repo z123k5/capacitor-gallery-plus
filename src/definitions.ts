@@ -138,13 +138,14 @@ export interface GetMediaOptions {
     motionPath?: boolean;
 }
 
+/**
+ * An extended version of `MediaItem` returned by `getMedia`.
+ */
 export interface FullMediaItem extends MediaItem {
     /**
-     * File path or accessible URI of the media item (only in `getMedia` with `path` enabled).
-     * Only available on iOS & Android.
+     * File path or accessible URI of the media item.
      */
     path?: string;
-
 
     /**
      * A converted version of the media file (JPEG for images, MP4 for videos).
