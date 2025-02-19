@@ -119,23 +119,15 @@ export interface GetMediaOptions {
     includeBaseColor?: boolean;
 
     /**
-     * Whether to generate a temporary path to access the original media.
-     * @default false
+     * Whether to generate a temporary path to access the media.
+     * Available on iOS, Android, and Web.
+     * 
+     * - On **iOS & Android**, the file path is only available if enabled.
+     * - On **Web**, the browser automatically provides a temporary URL.
+     *
+     * @default false (iOS & Android), always available on Web
      */
-    path?: boolean;
-
-    /**
-     * Whether to generate a converted path (JPEG for images, MP4 for videos).
-     * @default false
-     */
-    convertedPath?: boolean;
-
-    /**
-     * Whether to generate a motion path for Live Photos or Motion Photos.
-     * Only available on iOS & Android.
-     * @default false
-     */
-    motionPath?: boolean;
+    includePath?: boolean;
 }
 
 /**
@@ -146,18 +138,6 @@ export interface FullMediaItem extends MediaItem {
      * File path or accessible URI of the media item.
      */
     path?: string;
-
-    /**
-     * A converted version of the media file (JPEG for images, MP4 for videos).
-     * Only available on iOS & Android.
-     */
-    convertedPath?: string;
-
-    /**
-     * The motion path for Live Photos or Motion Photos.
-     * Only available on iOS & Android.
-     */
-    motionPath?: string;
 }
 
 export interface MediaItem {

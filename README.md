@@ -190,23 +190,19 @@ Retrieves details of a specific media item by its ID.
 
 An extended version of <a href="#mediaitem">`MediaItem`</a> returned by `getMedia`.
 
-| Prop                | Type                | Description                                                                                               |
-| ------------------- | ------------------- | --------------------------------------------------------------------------------------------------------- |
-| **`path`**          | <code>string</code> | File path or accessible URI of the media item.                                                            |
-| **`convertedPath`** | <code>string</code> | A converted version of the media file (JPEG for images, MP4 for videos). Only available on iOS & Android. |
-| **`motionPath`**    | <code>string</code> | The motion path for Live Photos or Motion Photos. Only available on iOS & Android.                        |
+| Prop       | Type                | Description                                    |
+| ---------- | ------------------- | ---------------------------------------------- |
+| **`path`** | <code>string</code> | File path or accessible URI of the media item. |
 
 
 #### GetMediaOptions
 
-| Prop                   | Type                 | Description                                                                                          | Default            |
-| ---------------------- | -------------------- | ---------------------------------------------------------------------------------------------------- | ------------------ |
-| **`id`**               | <code>string</code>  | The unique identifier of the media item.                                                             |                    |
-| **`includeDetails`**   | <code>boolean</code> | Whether to include additional metadata such as width, height, and file size.                         | <code>false</code> |
-| **`includeBaseColor`** | <code>boolean</code> | Whether to extract and return the dominant color of the image.                                       | <code>false</code> |
-| **`path`**             | <code>boolean</code> | Whether to generate a temporary path to access the original media.                                   | <code>false</code> |
-| **`convertedPath`**    | <code>boolean</code> | Whether to generate a converted path (JPEG for images, MP4 for videos).                              | <code>false</code> |
-| **`motionPath`**       | <code>boolean</code> | Whether to generate a motion path for Live Photos or Motion Photos. Only available on iOS & Android. | <code>false</code> |
+| Prop                   | Type                 | Description                                                                                                                                                                                                                         | Default                                                     |
+| ---------------------- | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| **`id`**               | <code>string</code>  | The unique identifier of the media item.                                                                                                                                                                                            |                                                             |
+| **`includeDetails`**   | <code>boolean</code> | Whether to include additional metadata such as width, height, and file size.                                                                                                                                                        | <code>false</code>                                          |
+| **`includeBaseColor`** | <code>boolean</code> | Whether to extract and return the dominant color of the image.                                                                                                                                                                      | <code>false</code>                                          |
+| **`includePath`**      | <code>boolean</code> | Whether to generate a temporary path to access the media. Available on iOS, Android, and Web. - On **iOS & Android**, the file path is only available if enabled. - On **Web**, the browser automatically provides a temporary URL. | <code>false (iOS & Android), always available on Web</code> |
 
 
 ### Enums
