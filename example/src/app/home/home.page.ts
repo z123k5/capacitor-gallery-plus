@@ -83,7 +83,7 @@ export class HomePage {
             id: media.id,
             includeBaseColor: true,
             includeDetails: true,
-            path: true
+            includePath: true
         });
 
         const modal = await this.modalController.create({
