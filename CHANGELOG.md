@@ -5,6 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.1.1] - 2025-02-20
+
+### Added
+
+- **Improved path handling in `getMedia`**
+  - Now directly retrieves original media file paths for images and videos.
+  - Uses `PHAssetResource` for more accurate file access on iOS.
+  
+- **Thumbnail generation optimizations**
+  - Web version uses `OffscreenCanvas` for faster processing.
+  
+- **Refactored `getMedia` structure**
+  - Introduced `includePath` instead of `path` for clarity.
+  - Added better error handling when media retrieval fails.
+  
+- **Refactored code structure**
+  - Moved conversion logic into separate helper functions.
+  - Improved maintainability and readability.
+
+### Fixed
+
+- **Media retrieval issues**
+  - Fixed an issue where `getMedia` would sometimes return stale data.
+  - Ensured video paths are correctly fetched for playback.
+  
+### Breaking Changes
+
+- **Renamed `generatePath` to `includePath` in `getMedia`**
+  - Update your API calls accordingly.
+  
 ## [0.1.0] - 2025-02-01
 
 ### Added
