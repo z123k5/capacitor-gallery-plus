@@ -1,6 +1,6 @@
 import { WebPlugin } from '@capacitor/core';
 
-import type { FullMediaItem, GalleryPlusPlugin, MediaItem } from './definitions';
+import type { FullMediaItem, GalleryPlusPlugin, GetMediaListOptions, GetMediaOptions, MediaItem } from './definitions';
 
 
 
@@ -18,11 +18,7 @@ export class GalleryPlusWeb extends WebPlugin implements GalleryPlusPlugin {
     private _mediaList = new Map();
  
     async getMediaList(
-        options: {
-            sort?: 'newest' | 'oldest';
-            includeDetails?: boolean;
-            includeBaseColor?: boolean;
-        } = {}
+        options: GetMediaListOptions = {}
     ): Promise<{ media: MediaItem[] }> {
         return new Promise((resolve, reject) => {
             const input = document.createElement('input');
@@ -55,7 +51,7 @@ export class GalleryPlusWeb extends WebPlugin implements GalleryPlusPlugin {
                                 thumbnail: await this.generateImageThumbnailFast(file, 200, 0.8)
                             };
     
-                            this._mediaList.set(file.name, mediaItem);
+                            this._mediaList.set(file.name, {...mediaItem, path, file});
     
                             if (file.type.startsWith('image/')) {
                                 if (options.includeDetails) {
@@ -104,18 +100,13 @@ export class GalleryPlusWeb extends WebPlugin implements GalleryPlusPlugin {
     }
     
     async getMedia(
-        options: {
-            id: string;
-            includeDetails?: boolean;
-            includeBaseColor?: boolean;
-            generatePath?: boolean;
-        }
+        options: GetMediaOptions
     ): Promise<FullMediaItem> {
         try {
-            const mediaItem = this._mediaList.get(options.id);
+            const mediaItem = this._mediaList.get(options.id) as FullMediaItem & {file?: File};
 
             if (mediaItem.type === 'image') {
-                if (options.includeDetails) {
+                if (options.includeDetails && mediaItem.path) {
                     await this.getImageDimensions(mediaItem.path).then(
                         (dimensions) => {
                             mediaItem.width = dimensions.width;
@@ -124,16 +115,17 @@ export class GalleryPlusWeb extends WebPlugin implements GalleryPlusPlugin {
                     );
                 }
 
-                if (options.includeBaseColor) {
+                if (options.includeBaseColor && mediaItem.path) {
                     await this.getDominantColor(mediaItem.path).then(
                         (baseColor) => {
                             mediaItem.baseColor = baseColor;
                         }
                     );
                 }
+
             } else if (mediaItem.type === 'video') {
 
-                if (options.includeDetails) {
+                if (options.includeDetails && mediaItem.path) {
                     await this.getVideoDimensions(mediaItem.path).then(
                         (dimensions) => {
                             mediaItem.width = dimensions.width;
@@ -142,8 +134,8 @@ export class GalleryPlusWeb extends WebPlugin implements GalleryPlusPlugin {
                     );
                 }
             }
-        
-            return mediaItem;
+
+            return mediaItem
         } catch (err) {
             console.error("Error in getMedia:", err);
             throw new Error("Failed to retrieve media.");
@@ -170,19 +162,21 @@ export class GalleryPlusWeb extends WebPlugin implements GalleryPlusPlugin {
     
         if ("OffscreenCanvas" in window) {
             const canvas = new OffscreenCanvas(width, height);
-            const ctx = canvas.getContext("2d", { alpha: true })!; // Transparenz aktivieren
-            ctx.clearRect(0, 0, width, height); // Hintergrund löschen
-            ctx.drawImage(imgBitmap, 0, 0, width, height);
-    
-            const blob = await canvas.convertToBlob({ type: "image/webp", quality });
-            return URL.createObjectURL(blob);
+            const ctx = canvas.getContext("2d", { alpha: true });
+
+            if (ctx) {
+                ctx.clearRect(0, 0, width, height); 
+                ctx.drawImage(imgBitmap, 0, 0, width, height);
+        
+                const blob = await canvas.convertToBlob({ type: "image/webp", quality });
+                return URL.createObjectURL(blob);
+            }
+
+            return "";
         } else {
             return "";
         }
     }
-    
-    
-    
 
     private async getImageDimensions(
         path: string
@@ -208,50 +202,54 @@ export class GalleryPlusWeb extends WebPlugin implements GalleryPlusPlugin {
     private async getDominantColor(path: string): Promise<string> {
         return new Promise((resolve) => {
             const img = new Image();
+            img.crossOrigin = "anonymous"; 
+    
             img.onload = () => {
-                const canvas = document.createElement('canvas');
-                canvas.width = 1;
-                canvas.height = 1;
-                const ctx = canvas.getContext('2d');
-                if (ctx) {
-                    ctx.drawImage(img, 0, 0, 1, 1);
-                    const pixel = ctx.getImageData(0, 0, 1, 1).data;
-                    resolve(
-                        `#${pixel[0].toString(16).padStart(2, '0')}${pixel[1]
-                            .toString(16)
-                            .padStart(2, '0')}${pixel[2]
-                            .toString(16)
-                            .padStart(2, '0')}`
-                    );
+                let canvas: OffscreenCanvas | HTMLCanvasElement;
+                let ctx: OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D | null;
+    
+                if ("OffscreenCanvas" in window) {
+                    canvas = new OffscreenCanvas(10, 10);
+                    ctx = canvas.getContext("2d");
                 } else {
-                    resolve('#000000');
+                    canvas = document.createElement("canvas");
+                    ctx = canvas.getContext("2d");
+                }
+    
+                if (ctx) {
+                    canvas.width = 10;
+                    canvas.height = 10;
+                    
+                    ctx.drawImage(img, 0, 0, 10, 10);
+                    const pixelData = ctx.getImageData(0, 0, 10, 10).data;
+    
+                    let r = 0, g = 0, b = 0, count = 0;
+                    for (let i = 0; i < pixelData.length; i += 4) {
+                        r += pixelData[i];
+                        g += pixelData[i + 1];
+                        b += pixelData[i + 2];
+                        count++;
+                    }
+
+                    r = Math.round(r / count);
+                    g = Math.round(g / count);
+                    b = Math.round(b / count);
+    
+                    const hex = `#${r.toString(16).padStart(2, "0")}${g
+                        .toString(16)
+                        .padStart(2, "0")}${b
+                        .toString(16)
+                        .padStart(2, "0")}`;
+    
+                    resolve(hex);
+
+                } else {
+                    resolve("#000000"); // fallback-color
                 }
             };
+    
+            img.onerror = () => resolve("#000000"); // catch error
             img.src = path;
         });
-    }
-
-   /* private async generateVideoThumbnailURL(file: File): Promise<string> {
-        return new Promise((resolve) => {
-            const video = document.createElement("video");
-            video.src = URL.createObjectURL(file);
-            video.muted = true;
-            video.crossOrigin = "anonymous";
-    
-            const canvas = document.createElement("canvas");
-            const ctx = canvas.getContext("2d")!;
-    
-            video.requestVideoFrameCallback(() => {
-                canvas.width = 200;
-                canvas.height = 200;
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                canvas.toBlob((blob) => {
-                    resolve(blob ? URL.createObjectURL(blob) : '');
-                }, "image/jpeg", 0.8);
-            });
-    
-            video.play();
-        });
-    }*/
-    
+    }   
 }
