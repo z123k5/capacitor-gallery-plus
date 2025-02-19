@@ -55,9 +55,10 @@ public class GalleryPlusPlugin: CAPPlugin {
 
         let includeDetails = call.getBool("includeDetails") ?? false
         let includeBaseColor = call.getBool("includeBaseColor") ?? false
-        let path = call.getBool("path") ?? false
+        let includePath = call.getBool("includePath") ?? false
+ 
 
-        gallery.getMedia(id: id, includeDetails: includeDetails, includeBaseColor: includeBaseColor, path: path) { mediaItem in
+        gallery.getMedia(id: id, includeDetails: includeDetails, includeBaseColor: includeBaseColor, includePath: includePath) { mediaItem in
             if let mediaItem = mediaItem {
                 call.resolve(mediaItem as! [String: Any])
             } else {

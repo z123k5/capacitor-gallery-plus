@@ -143,11 +143,10 @@ public class GalleryPlus: NSObject {
         }
     }
 
-    @objc public func getMedia(id: String, includeDetails: Bool, includeBaseColor: Bool, path: Bool, completion: @escaping (NSDictionary?) -> Void) {
+    @objc public func getMedia(id: String, includeDetails: Bool, includeBaseColor: Bool, includePath: Bool, completion: @escaping (NSDictionary?) -> Void) {
         let fetchOptions = PHFetchOptions()
         fetchOptions.predicate = NSPredicate(format: "localIdentifier == %@", id)
         let fetchResult = PHAsset.fetchAssets(with: fetchOptions) // dont move up!
-
 
         guard let asset = fetchResult.firstObject else {
             completion(nil)
@@ -171,20 +170,15 @@ public class GalleryPlus: NSObject {
         let dispatchGroup = DispatchGroup()
         let imageManager = PHImageManager.default()
 
-        if path {
+        if includePath {
             if asset.mediaType == .image {
                 dispatchGroup.enter()
-
-                let options = PHImageRequestOptions()
-                options.isSynchronous = true
-                options.deliveryMode = .highQualityFormat
-
-                imageManager.requestImageDataAndOrientation(for: asset, options: options) { data, _, _, _ in
-                    if let data = data {
-                        let tempPath = FileManager.default.temporaryDirectory.appendingPathComponent("\(UUID().uuidString).jpg")
-                        try? data.write(to: tempPath)
-                        mediaItem["path"] = tempPath.absoluteString
+                  
+                getLocalFilePath(for: asset) { localURL in
+                    if let fileURL = localURL {
+                        mediaItem["path"] = fileURL.absoluteString
                     }
+
                     dispatchGroup.leave()
                 }
                 
@@ -232,9 +226,18 @@ public class GalleryPlus: NSObject {
             }
         }
 
-
         dispatchGroup.notify(queue: .main) {
             completion(mediaItem as NSDictionary)
         }
     }
+    
+    func getLocalFilePath(for asset: PHAsset, completion: @escaping (URL?) -> Void) {
+        let options = PHContentEditingInputRequestOptions()
+        options.isNetworkAccessAllowed = true
+        asset.requestContentEditingInput(with: options) { input, _ in
+            completion(input?.fullSizeImageURL)
+        }
+    }
 }
+
+
