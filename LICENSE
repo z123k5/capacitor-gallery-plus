@@ -1,3 +1,7 @@
+This project is based on "Capacitor Gallery Plus" by Stephan Fischer.  
+Original repository: [https://github.com/stephan-fischer/capacitor-gallery-plus](https://github.com/stephan-fischer/capacitor-gallery-plus)  
+
+
 MIT License
 
 Copyright (c) 2025 Stephan Fischer
@@ -30,6 +34,11 @@ Commercial License Terms:
 - You are not allowed to sublicense, distribute, or modify this plugin in a closed-source project without purchasing a commercial license.
 - If you wish to use this software in a proprietary project, you must obtain a commercial license from MrFischer Web-Development.
 - Support and extended functionality may be available under a paid license.
+
+
+For commercial use, a license must be obtained from the original author:  
+
+[https://github.com/stephan-fischer/capacitor-gallery-plus](https://github.com/stephan-fischer/capacitor-gallery-plus)  
 
 For inquiries regarding commercial licensing, please contact:
 
