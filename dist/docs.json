@@ -1,0 +1,424 @@
+{
+  "api": {
+    "name": "GalleryPlusPlugin",
+    "slug": "galleryplusplugin",
+    "docs": "",
+    "tags": [],
+    "methods": [
+      {
+        "name": "checkPermissions",
+        "signature": "() => Promise<{ status: string; }>",
+        "parameters": [],
+        "returns": "Promise<{ status: string; }>",
+        "tags": [
+          {
+            "name": "returns",
+            "text": "\r\nA promise resolving to an object containing the permission status."
+          }
+        ],
+        "docs": "Checks the current permissions for accessing media.",
+        "complexTypes": [],
+        "slug": "checkpermissions"
+      },
+      {
+        "name": "requestPermissions",
+        "signature": "() => Promise<{ status: string; }>",
+        "parameters": [],
+        "returns": "Promise<{ status: string; }>",
+        "tags": [
+          {
+            "name": "returns",
+            "text": "\r\nA promise resolving to an object containing the updated permission status."
+          }
+        ],
+        "docs": "Requests the necessary permissions to access media.",
+        "complexTypes": [],
+        "slug": "requestpermissions"
+      },
+      {
+        "name": "getMediaList",
+        "signature": "(options: GetMediaListOptions) => Promise<{ media: MediaItem[]; }>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "- The options for retrieving media.",
+            "type": "GetMediaListOptions"
+          }
+        ],
+        "returns": "Promise<{ media: MediaItem[]; }>",
+        "tags": [
+          {
+            "name": "param",
+            "text": "options - The options for retrieving media."
+          },
+          {
+            "name": "returns",
+            "text": "\r\nA promise resolving to an object containing a list of media items."
+          }
+        ],
+        "docs": "Retrieves media items from the device gallery.",
+        "complexTypes": [
+          "MediaItem",
+          "GetMediaListOptions"
+        ],
+        "slug": "getmedialist"
+      },
+      {
+        "name": "getMedia",
+        "signature": "(options: GetMediaOptions) => Promise<FullMediaItem>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "",
+            "type": "GetMediaOptions"
+          }
+        ],
+        "returns": "Promise<FullMediaItem>",
+        "tags": [
+          {
+            "name": "returns",
+            "text": "A promise resolving to a media item object."
+          }
+        ],
+        "docs": "Retrieves details of a specific media item by its ID.",
+        "complexTypes": [
+          "FullMediaItem",
+          "GetMediaOptions"
+        ],
+        "slug": "getmedia"
+      }
+    ],
+    "properties": []
+  },
+  "interfaces": [
+    {
+      "name": "MediaItem",
+      "slug": "mediaitem",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "id",
+          "tags": [],
+          "docs": "Unique identifier of the media item.",
+          "complexTypes": [],
+          "type": "string"
+        },
+        {
+          "name": "type",
+          "tags": [],
+          "docs": "The type of media (image or video).",
+          "complexTypes": [],
+          "type": "'image' | 'video'"
+        },
+        {
+          "name": "createdAt",
+          "tags": [],
+          "docs": "The Unix timestamp in milliseconds when the media was created.",
+          "complexTypes": [],
+          "type": "number"
+        },
+        {
+          "name": "thumbnail",
+          "tags": [],
+          "docs": "Base64-encoded thumbnail image (only in `getMediaList`).",
+          "complexTypes": [],
+          "type": "string | undefined"
+        },
+        {
+          "name": "baseColor",
+          "tags": [],
+          "docs": "Dominant color of the image (requires `includeBaseColor`).",
+          "complexTypes": [],
+          "type": "string | undefined"
+        },
+        {
+          "name": "name",
+          "tags": [],
+          "docs": "Original file name of the media (only applicable for web platforms).",
+          "complexTypes": [],
+          "type": "string | undefined"
+        },
+        {
+          "name": "width",
+          "tags": [],
+          "docs": "Width of the media in pixels (requires `includeDetails`).",
+          "complexTypes": [],
+          "type": "number | undefined"
+        },
+        {
+          "name": "height",
+          "tags": [],
+          "docs": "Height of the media in pixels (requires `includeDetails`).",
+          "complexTypes": [],
+          "type": "number | undefined"
+        },
+        {
+          "name": "fileSize",
+          "tags": [],
+          "docs": "Size of the file in bytes.",
+          "complexTypes": [],
+          "type": "number | undefined"
+        },
+        {
+          "name": "mimeType",
+          "tags": [],
+          "docs": "The MIME type of the media item (e.g., \"image/jpeg\", \"video/mp4\").",
+          "complexTypes": [],
+          "type": "string | undefined"
+        },
+        {
+          "name": "isFavorite",
+          "tags": [],
+          "docs": "Indicates whether the media item is marked as a favorite.\r\n(iOS-only)",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "isHidden",
+          "tags": [],
+          "docs": "Indicates whether the media item is hidden.\r\n(iOS-only)",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "subtype",
+          "tags": [],
+          "docs": "The subtype of the media, indicating special properties",
+          "complexTypes": [
+            "MediaSubtype"
+          ],
+          "type": "MediaSubtype"
+        }
+      ]
+    },
+    {
+      "name": "GetMediaListOptions",
+      "slug": "getmedialistoptions",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "type",
+          "tags": [
+            {
+              "text": "\"all\"",
+              "name": "default"
+            }
+          ],
+          "docs": "The type of media to retrieve. Default is `\"all\"`.\r\n\r\n- `\"image\"`: Only images\r\n- `\"video\"`: Only videos\r\n- `\"all\"`: Both images and videos",
+          "complexTypes": [],
+          "type": "'image' | 'video' | 'all' | undefined"
+        },
+        {
+          "name": "limit",
+          "tags": [],
+          "docs": "The maximum number of media items to return.",
+          "complexTypes": [],
+          "type": "number | undefined"
+        },
+        {
+          "name": "startAt",
+          "tags": [],
+          "docs": "The starting index for pagination.",
+          "complexTypes": [],
+          "type": "number | undefined"
+        },
+        {
+          "name": "thumbnailSize",
+          "tags": [],
+          "docs": "The size of the thumbnail in pixels.\r\n\r\nExample: `200` for 200x200px.",
+          "complexTypes": [],
+          "type": "number | undefined"
+        },
+        {
+          "name": "sort",
+          "tags": [
+            {
+              "text": "\"newest\"",
+              "name": "default"
+            }
+          ],
+          "docs": "Sort order of the media items.\r\n\r\n- `\"oldest\"`: Oldest first\r\n- `\"newest\"`: Newest first",
+          "complexTypes": [],
+          "type": "'oldest' | 'newest' | undefined"
+        },
+        {
+          "name": "includeDetails",
+          "tags": [],
+          "docs": "Whether to include additional details like width, height.",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "includeBaseColor",
+          "tags": [],
+          "docs": "Whether to extract and return the dominant color of the image.",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "filter",
+          "tags": [],
+          "docs": "Filter applied to the media selection",
+          "complexTypes": [
+            "MediaFilter"
+          ],
+          "type": "MediaFilter"
+        }
+      ]
+    },
+    {
+      "name": "FullMediaItem",
+      "slug": "fullmediaitem",
+      "docs": "An extended version of `MediaItem` returned by `getMedia`.",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "path",
+          "tags": [],
+          "docs": "File path or accessible URI of the media item.",
+          "complexTypes": [],
+          "type": "string | undefined"
+        }
+      ]
+    },
+    {
+      "name": "GetMediaOptions",
+      "slug": "getmediaoptions",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "id",
+          "tags": [],
+          "docs": "The unique identifier of the media item.",
+          "complexTypes": [],
+          "type": "string"
+        },
+        {
+          "name": "includeDetails",
+          "tags": [
+            {
+              "text": "false",
+              "name": "default"
+            }
+          ],
+          "docs": "Whether to include additional metadata such as width, height, and file size.",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "includeBaseColor",
+          "tags": [
+            {
+              "text": "false",
+              "name": "default"
+            }
+          ],
+          "docs": "Whether to extract and return the dominant color of the image.",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "includePath",
+          "tags": [
+            {
+              "text": "false (iOS & Android), always available on Web",
+              "name": "default"
+            }
+          ],
+          "docs": "Whether to generate a temporary path to access the media.\r\nAvailable on iOS, Android, and Web.\r\n\r\n- On **iOS & Android**, the file path is only available if enabled.\r\n- On **Web**, the browser automatically provides a temporary URL.",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        }
+      ]
+    }
+  ],
+  "enums": [
+    {
+      "name": "MediaSubtype",
+      "slug": "mediasubtype",
+      "members": [
+        {
+          "name": "MotionPhoto",
+          "value": "\"motion_photo\"",
+          "tags": [],
+          "docs": "A Live Photo (iOS) or Motion Photo (Android)"
+        },
+        {
+          "name": "Panorama",
+          "value": "\"panorama\"",
+          "tags": [],
+          "docs": "A panorama image"
+        },
+        {
+          "name": "HDR",
+          "value": "\"hdr\"",
+          "tags": [],
+          "docs": "A high dynamic range (HDR) image"
+        },
+        {
+          "name": "Screenshot",
+          "value": "\"screenshot\"",
+          "tags": [],
+          "docs": "A screenshot"
+        },
+        {
+          "name": "Portrait",
+          "value": "\"portrait\"",
+          "tags": [],
+          "docs": "A photo with depth effect (bokeh)"
+        },
+        {
+          "name": "SlowMotion",
+          "value": "\"slow_motion\"",
+          "tags": [],
+          "docs": "A high frame rate slow-motion video"
+        },
+        {
+          "name": "Timelapse",
+          "value": "\"timelapse\"",
+          "tags": [],
+          "docs": "A time-lapse video"
+        }
+      ]
+    },
+    {
+      "name": "MediaFilter",
+      "slug": "mediafilter",
+      "members": [
+        {
+          "name": "All",
+          "value": "\"all\"",
+          "tags": [],
+          "docs": "No filtering, returns all media"
+        },
+        {
+          "name": "Panorama",
+          "value": "\"panorama\"",
+          "tags": [],
+          "docs": "Only return panoramic images"
+        },
+        {
+          "name": "HDR",
+          "value": "\"hdr\"",
+          "tags": [],
+          "docs": "Only return HDR images"
+        },
+        {
+          "name": "Screenshot",
+          "value": "\"screenshot\"",
+          "tags": [],
+          "docs": "Only return screenshots"
+        }
+      ]
+    }
+  ],
+  "typeAliases": [],
+  "pluginConfigs": []
+}

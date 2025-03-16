@@ -7,7 +7,7 @@ A Capacitor plugin for accessing and managing media files (photos & videos) on i
   <br/>
   <img src="https://img.shields.io/badge/Web-Supported-brightgreen?style=flat&logo=internet-explorer&logoColor=white" />
   <img src="https://img.shields.io/badge/iOS-Supported-brightgreen?style=flat&logo=apple&logoColor=white" />
-  <img src="https://img.shields.io/badge/Android-Planned-orange?style=flat&logo=android&logoColor=white&labelColor=grey" />
+  <img src="https://img.shields.io/badge/Android-Supported-brightgreen?style=flat&logo=android&logoColor=white" />
 </p>
 
 ## Features
