@@ -92,7 +92,7 @@ public class GalleryPlus {
                         mediaItem.put("mimeType", cursor.getString(3));
 
 
-                        // 获取缩略图
+                        // Get Thumbnails
                         Bitmap thumbnail = null;
                         if (type == MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE) {
                             mediaItem.put("fileSize", cursor.getLong(4));
@@ -130,7 +130,7 @@ public class GalleryPlus {
                 }
                 count++;
                 if (count >= startAt + limit) {
-                    break; // 只取需要的数量
+                    break; // fetch only the requested amount
                 }
             }
             cursor.close();
