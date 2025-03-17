@@ -2,6 +2,10 @@
 
 A Capacitor plugin for accessing and managing media files (photos & videos) on iOS and Android. This plugin provides an easy way to retrieve media from the device's gallery, including metadata such as filenames, paths, and types.
 
+This project is based on "Capacitor Gallery Plus" by Stephan Fischer.  
+Original repository: [https://github.com/stephan-fischer/capacitor-gallery-plus](https://github.com/stephan-fischer/capacitor-gallery-plus)  
+
+
 <p align="center">
   <img src="https://img.shields.io/badge/Capacitor%20Versions-v5,%20v6%20and%20v7-blue?logo=Capacitor&style=flat-square" />
   <br/>
@@ -235,9 +239,11 @@ An extended version of <a href="#mediaitem">`MediaItem`</a> returned by `getMedi
 
 ## License
 
-This project is **dual-licensed** under:
-1. **MIT License (Free & Open-Source)** – For personal, educational, and open-source use.
-2. **Commercial License** – Required for closed-source, proprietary, or commercial use.
+This project is dual-licensed under:  
+- **MIT License** – For personal, educational, and open-source use.  
+- **Commercial License** – Required for closed-source, proprietary, or commercial use.  
+For commercial use, a license must be obtained from the original author:  
+[https://github.com/stephan-fischer/capacitor-gallery-plus](https://github.com/stephan-fischer/capacitor-gallery-plus)  
 
 
 See the [LICENSE](LICENSE) file for more details.
