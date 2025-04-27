@@ -120,8 +120,11 @@ public class GalleryPlusPlugin extends Plugin {
                 if (inputStream != null) {
                     ExifInterface exifInterface = new ExifInterface(inputStream);
                     // 这里可以从exifInterface读取各种EXIF字段
+                    String latRef = exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
+                    String lngRef = exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
                     String latitude = exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
                     String longitude = exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
+
                     dev = exifInterface.getAttribute(ExifInterface.TAG_MODEL);
                     lat = score2dimensionality(latitude);
                     lon = score2dimensionality(longitude);
