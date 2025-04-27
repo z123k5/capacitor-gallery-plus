@@ -126,9 +126,17 @@ export interface FullMediaItem extends MediaItem {
      */
     path?: string;
     /**
-     * File EXIF data, if includeDetails is true.
+     * The EXIF metadata of the media item: device of capture, camera model, etc.
      */
-    exif_device?: string;
+    exif_dev?: string;
+    /**
+     * The EXIF metadata of the media item: latitude of capture.
+     */
+    exif_lat?: number;
+    /**
+     * The EXIF metadata of the media item: longitude of capture.
+     */
+    exif_lon?: number;
 }
 export interface MediaItem {
     /**

@@ -194,10 +194,12 @@ Retrieves details of a specific media item by its ID.
 
 An extended version of <a href="#mediaitem">`MediaItem`</a> returned by `getMedia`.
 
-| Prop              | Type                | Description                                    |
-| ----------------- | ------------------- | ---------------------------------------------- |
-| **`path`**        | <code>string</code> | File path or accessible URI of the media item. |
-| **`exif_device`** | <code>string</code> | File EXIF data, if includeDetails is true.     |
+| Prop           | Type                | Description                                                                |
+| -------------- | ------------------- | -------------------------------------------------------------------------- |
+| **`path`**     | <code>string</code> | File path or accessible URI of the media item.                             |
+| **`exif_dev`** | <code>string</code> | The EXIF metadata of the media item: device of capture, camera model, etc. |
+| **`exif_lat`** | <code>number</code> | The EXIF metadata of the media item: latitude of capture.                  |
+| **`exif_lon`** | <code>number</code> | The EXIF metadata of the media item: longitude of capture.                 |
 
 
 #### GetMediaOptions

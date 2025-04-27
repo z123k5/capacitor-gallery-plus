@@ -285,11 +285,25 @@
           "type": "string | undefined"
         },
         {
-          "name": "exif_device",
+          "name": "exif_dev",
           "tags": [],
-          "docs": "File EXIF data, if includeDetails is true.",
+          "docs": "The EXIF metadata of the media item: device of capture, camera model, etc.",
           "complexTypes": [],
           "type": "string | undefined"
+        },
+        {
+          "name": "exif_lat",
+          "tags": [],
+          "docs": "The EXIF metadata of the media item: latitude of capture.",
+          "complexTypes": [],
+          "type": "number | undefined"
+        },
+        {
+          "name": "exif_lon",
+          "tags": [],
+          "docs": "The EXIF metadata of the media item: longitude of capture.",
+          "complexTypes": [],
+          "type": "number | undefined"
         }
       ]
     },
