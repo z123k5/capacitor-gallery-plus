@@ -125,6 +125,10 @@ export interface FullMediaItem extends MediaItem {
      * File path or accessible URI of the media item.
      */
     path?: string;
+    /**
+     * File EXIF data, if includeDetails is true.
+     */
+    exif_device?: string;
 }
 export interface MediaItem {
     /**

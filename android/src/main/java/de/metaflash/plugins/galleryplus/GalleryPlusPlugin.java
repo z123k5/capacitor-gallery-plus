@@ -14,6 +14,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.util.Size;
 import androidx.core.app.ActivityCompat;
+import androidx.exifinterface.media.ExifInterface;
 import androidx.palette.graphics.Palette;
 
 import com.getcapacitor.*;
@@ -21,6 +22,7 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 import org.json.JSONArray;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 
 @CapacitorPlugin(name = "GalleryPlus")
@@ -67,6 +69,25 @@ public class GalleryPlusPlugin extends Plugin {
         call.resolve(result);
     }
 
+    private double score2dimensionality(String string) {
+        double dimensionality = 0.0;
+        if (null==string){
+            return dimensionality;
+        }
+
+        //用 ，将数值分成3份
+        String[] split = string.split(",");
+        for (int i = 0; i < split.length; i++) {
+
+            String[] s = split[i].split("/");
+            //用112/1得到度分秒数值
+            double v = Double.parseDouble(s[0]) / Double.parseDouble(s[1]);
+            //将分秒分别除以60和3600得到度，并将度分秒相加
+            dimensionality=dimensionality+v/Math.pow(60,i);
+        }
+        return dimensionality;
+    }
+
     @PluginMethod
     public void getMedia(PluginCall call) {
         String id = call.getString("id");
@@ -90,6 +111,26 @@ public class GalleryPlusPlugin extends Plugin {
             MediaStore.Images.Media.HEIGHT,
             MediaStore.Video.Media.DURATION
         };
+        double lat = 0, lon = 0;
+        String dev = "";
+
+        if (includeDetails) {
+            Uri imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, Long.parseLong(id));
+            try (InputStream inputStream = contentResolver.openInputStream(imageUri)) {
+                if (inputStream != null) {
+                    ExifInterface exifInterface = new ExifInterface(inputStream);
+                    // 这里可以从exifInterface读取各种EXIF字段
+                    String latitude = exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+                    String longitude = exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
+                    dev = exifInterface.getAttribute(ExifInterface.TAG_MODEL);
+                    lat = score2dimensionality(latitude);
+                    lon = score2dimensionality(longitude);
+
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         try (Cursor cursor = contentResolver.query(contentUri, projection, selection, selectionArgs, null)) {
             if (cursor != null && cursor.moveToFirst()) {
@@ -98,9 +139,12 @@ public class GalleryPlusPlugin extends Plugin {
                 long createdAt = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_ADDED)) * 1000;
                 long fileSize = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.SIZE));
                 int width = 0, height = 0;
+
+
                 if (includeDetails) {
                     width = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.WIDTH));
                     height = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.HEIGHT));
+
                 }
 
                 JSObject mediaItem = new JSObject();
@@ -112,6 +156,9 @@ public class GalleryPlusPlugin extends Plugin {
                 if (includeDetails) {
                     mediaItem.put("width", width);
                     mediaItem.put("height", height);
+                    mediaItem.put("exif_dev", dev);
+                    mediaItem.put("exif_lat", lat);
+                    mediaItem.put("exif_lon", lon);
                 }
 
                 // Process includeBaseColor

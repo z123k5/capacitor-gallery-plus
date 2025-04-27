@@ -283,6 +283,13 @@
           "docs": "File path or accessible URI of the media item.",
           "complexTypes": [],
           "type": "string | undefined"
+        },
+        {
+          "name": "exif_device",
+          "tags": [],
+          "docs": "File EXIF data, if includeDetails is true.",
+          "complexTypes": [],
+          "type": "string | undefined"
         }
       ]
     },
