@@ -128,7 +128,6 @@ public class GalleryPlusPlugin extends Plugin {
                     dev = exifInterface.getAttribute(ExifInterface.TAG_MODEL);
                     lat = score2dimensionality(latitude);
                     lon = score2dimensionality(longitude);
-
                 }
             } catch (IOException e) {
                 e.printStackTrace();
