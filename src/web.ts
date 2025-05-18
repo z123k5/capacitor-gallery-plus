@@ -1,6 +1,6 @@
 import { WebPlugin } from '@capacitor/core';
 
-import type { FullMediaItem, GalleryPlusPlugin, GetMediaListOptions, GetMediaOptions, MediaItem } from './definitions';
+import type { DeleteMediaOptions, FullMediaItem, GalleryPlusPlugin, GetMediaListOptions, GetMediaOptions, MediaItem } from './definitions';
 
 
 
@@ -19,7 +19,7 @@ export class GalleryPlusWeb extends WebPlugin implements GalleryPlusPlugin {
  
     async getMediaList(
         options: GetMediaListOptions = {}
-    ): Promise<{ media: MediaItem[] }> {
+    ): Promise<{ media: MediaItem[], totalCount: number }> {
         return new Promise((resolve, reject) => {
             const input = document.createElement('input');
             input.type = 'file';
@@ -46,9 +46,10 @@ export class GalleryPlusWeb extends WebPlugin implements GalleryPlusPlugin {
                                 name: file.name,
                                 type: file.type.startsWith('image/') ? 'image' : 'video',
                                 createdAt: file.lastModified,
+                                modifiedAt: file.lastModified,
                                 fileSize: file.size,
                                 mimeType: file.type,
-                                thumbnail: await this.generateImageThumbnailFast(file, 200, 0.8)
+                                thumbnailV1: await this.generateImageThumbnailFast(file, 200, 0.8)
                             };
     
                             this._mediaList.set(file.name, {...mediaItem, path, file});
@@ -86,7 +87,7 @@ export class GalleryPlusWeb extends WebPlugin implements GalleryPlusPlugin {
                     );
     
                     console.log('list', this._mediaList);
-                    resolve({ media: mediaArray });
+                    resolve({ media: mediaArray, totalCount: this._mediaList.size });
                 } catch (err) {
                     console.error('Error processing files:', err);
                     reject(err);
@@ -96,6 +97,36 @@ export class GalleryPlusWeb extends WebPlugin implements GalleryPlusPlugin {
             document.body.appendChild(input);
             input.click();
             document.body.removeChild(input);
+        });
+    }
+
+    async getMediaListShouldBeDelete(
+        options: DeleteMediaOptions
+    ): Promise<string[]> {
+        return new Promise((resolve) => {
+            const mediaArray: string[] = [];
+
+            for (const id of options.ids) {
+                if (!this._mediaList.has(id)) {
+                    mediaArray.push(id);
+                }
+            }
+
+            resolve(mediaArray);
+        });
+    }
+
+    async getMediaListByManyId(
+        options: {
+            ids: string[];
+            includeDetails?: boolean;
+            includeBaseColor?: boolean;
+        }
+    ): Promise<{ media: MediaItem[], totalCount: number }> {
+        console.warn('checkPermissions is not required on web.');
+        return new Promise((resolve) => {
+            resolve({ media: options.ids.map(id => this._mediaList.get(id)), totalCount: this._mediaList.size });
+
         });
     }
     

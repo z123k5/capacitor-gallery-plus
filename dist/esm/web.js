@@ -36,9 +36,10 @@ export class GalleryPlusWeb extends WebPlugin {
                                 name: file.name,
                                 type: file.type.startsWith('image/') ? 'image' : 'video',
                                 createdAt: file.lastModified,
+                                modifiedAt: file.lastModified,
                                 fileSize: file.size,
                                 mimeType: file.type,
-                                thumbnail: await this.generateImageThumbnailFast(file, 200, 0.8)
+                                thumbnailV1: await this.generateImageThumbnailFast(file, 200, 0.8)
                             };
                             this._mediaList.set(file.name, Object.assign(Object.assign({}, mediaItem), { path, file }));
                             if (file.type.startsWith('image/')) {
@@ -69,7 +70,7 @@ export class GalleryPlusWeb extends WebPlugin {
                         ? Number(a.createdAt) - Number(b.createdAt)
                         : Number(b.createdAt) - Number(a.createdAt));
                     console.log('list', this._mediaList);
-                    resolve({ media: mediaArray });
+                    resolve({ media: mediaArray, totalCount: this._mediaList.size });
                 }
                 catch (err) {
                     console.error('Error processing files:', err);
@@ -79,6 +80,23 @@ export class GalleryPlusWeb extends WebPlugin {
             document.body.appendChild(input);
             input.click();
             document.body.removeChild(input);
+        });
+    }
+    async getMediaListShouldBeDelete(options) {
+        return new Promise((resolve) => {
+            const mediaArray = [];
+            for (const id of options.ids) {
+                if (!this._mediaList.has(id)) {
+                    mediaArray.push(id);
+                }
+            }
+            resolve(mediaArray);
+        });
+    }
+    async getMediaListByManyId(options) {
+        console.warn('checkPermissions is not required on web.');
+        return new Promise((resolve) => {
+            resolve({ media: options.ids.map(id => this._mediaList.get(id)), totalCount: this._mediaList.size });
         });
     }
     async getMedia(options) {

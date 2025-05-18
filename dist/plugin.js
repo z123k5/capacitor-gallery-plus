@@ -38,9 +38,10 @@ var capacitorGalleryPlus = (function (exports, core) {
                                     name: file.name,
                                     type: file.type.startsWith('image/') ? 'image' : 'video',
                                     createdAt: file.lastModified,
+                                    modifiedAt: file.lastModified,
                                     fileSize: file.size,
                                     mimeType: file.type,
-                                    thumbnail: await this.generateImageThumbnailFast(file, 200, 0.8)
+                                    thumbnailV1: await this.generateImageThumbnailFast(file, 200, 0.8)
                                 };
                                 this._mediaList.set(file.name, Object.assign(Object.assign({}, mediaItem), { path, file }));
                                 if (file.type.startsWith('image/')) {
@@ -71,7 +72,7 @@ var capacitorGalleryPlus = (function (exports, core) {
                             ? Number(a.createdAt) - Number(b.createdAt)
                             : Number(b.createdAt) - Number(a.createdAt));
                         console.log('list', this._mediaList);
-                        resolve({ media: mediaArray });
+                        resolve({ media: mediaArray, totalCount: this._mediaList.size });
                     }
                     catch (err) {
                         console.error('Error processing files:', err);
@@ -81,6 +82,23 @@ var capacitorGalleryPlus = (function (exports, core) {
                 document.body.appendChild(input);
                 input.click();
                 document.body.removeChild(input);
+            });
+        }
+        async getMediaListShouldBeDelete(options) {
+            return new Promise((resolve) => {
+                const mediaArray = [];
+                for (const id of options.ids) {
+                    if (!this._mediaList.has(id)) {
+                        mediaArray.push(id);
+                    }
+                }
+                resolve(mediaArray);
+            });
+        }
+        async getMediaListByManyId(options) {
+            console.warn('checkPermissions is not required on web.');
+            return new Promise((resolve) => {
+                resolve({ media: options.ids.map(id => this._mediaList.get(id)), totalCount: this._mediaList.size });
             });
         }
         async getMedia(options) {
@@ -202,42 +220,6 @@ var capacitorGalleryPlus = (function (exports, core) {
             });
         }
     }
-
-    /**
-     * Filters for querying media items from the gallery.
-     */
-    exports.MediaFilter = void 0;
-    (function (MediaFilter) {
-        /** No filtering, returns all media */
-        MediaFilter["All"] = "all";
-        /** Only return panoramic images */
-        MediaFilter["Panorama"] = "panorama";
-        /** Only return HDR images */
-        MediaFilter["HDR"] = "hdr";
-        /** Only return screenshots */
-        MediaFilter["Screenshot"] = "screenshot";
-    })(exports.MediaFilter || (exports.MediaFilter = {}));
-    /**
-     * Represents special subtypes of media items, such as motion photos,
-     * panoramas, HDR images, or slow-motion videos.
-     */
-    exports.MediaSubtype = void 0;
-    (function (MediaSubtype) {
-        /** A Live Photo (iOS) or Motion Photo (Android) */
-        MediaSubtype["MotionPhoto"] = "motion_photo";
-        /** A panorama image */
-        MediaSubtype["Panorama"] = "panorama";
-        /** A high dynamic range (HDR) image */
-        MediaSubtype["HDR"] = "hdr";
-        /** A screenshot */
-        MediaSubtype["Screenshot"] = "screenshot";
-        /** A photo with depth effect (bokeh) */
-        MediaSubtype["Portrait"] = "portrait";
-        /** A high frame rate slow-motion video */
-        MediaSubtype["SlowMotion"] = "slow_motion";
-        /** A time-lapse video */
-        MediaSubtype["Timelapse"] = "timelapse";
-    })(exports.MediaSubtype || (exports.MediaSubtype = {}));
 
     const GalleryPlus = core.registerPlugin('GalleryPlus', {
         web: () => new GalleryPlusWeb()

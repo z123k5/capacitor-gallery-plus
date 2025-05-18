@@ -37,7 +37,7 @@
       },
       {
         "name": "getMediaList",
-        "signature": "(options: GetMediaListOptions) => Promise<{ media: MediaItem[]; }>",
+        "signature": "(options: GetMediaListOptions) => Promise<getMediaListResponse>",
         "parameters": [
           {
             "name": "options",
@@ -45,7 +45,7 @@
             "type": "GetMediaListOptions"
           }
         ],
-        "returns": "Promise<{ media: MediaItem[]; }>",
+        "returns": "Promise<getMediaListResponse>",
         "tags": [
           {
             "name": "param",
@@ -58,7 +58,7 @@
         ],
         "docs": "Retrieves media items from the device gallery.",
         "complexTypes": [
-          "MediaItem",
+          "getMediaListResponse",
           "GetMediaListOptions"
         ],
         "slug": "getmedialist"
@@ -86,11 +86,90 @@
           "GetMediaOptions"
         ],
         "slug": "getmedia"
+      },
+      {
+        "name": "getMediaListShouldBeDelete",
+        "signature": "(options: DeleteMediaOptions) => Promise<string[]>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "",
+            "type": "DeleteMediaOptions"
+          }
+        ],
+        "returns": "Promise<string[]>",
+        "tags": [
+          {
+            "name": "param",
+            "text": "id - The IDs of the media items to be query."
+          },
+          {
+            "name": "returns",
+            "text": "A promise resolving to a list of media IDs that should be deleted (not in gallery)."
+          }
+        ],
+        "docs": "Get media list should be delete",
+        "complexTypes": [
+          "DeleteMediaOptions"
+        ],
+        "slug": "getmedialistshouldbedelete"
+      },
+      {
+        "name": "getMediaListByManyId",
+        "signature": "(options: { ids: string[]; includeDetails?: boolean; includeBaseColor?: boolean; }) => Promise<{ media: MediaItem[]; totalCount: number; }>",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "- The options for getting media list.",
+            "type": "{ ids: string[]; includeDetails?: boolean | undefined; includeBaseColor?: boolean | undefined; }"
+          }
+        ],
+        "returns": "Promise<{ media: MediaItem[]; totalCount: number; }>",
+        "tags": [
+          {
+            "name": "param",
+            "text": "options - The options for getting media list."
+          },
+          {
+            "name": "returns",
+            "text": "A promise resolving to a list of media items."
+          }
+        ],
+        "docs": "Get media list by many IDs",
+        "complexTypes": [
+          "MediaItem"
+        ],
+        "slug": "getmedialistbymanyid"
       }
     ],
     "properties": []
   },
   "interfaces": [
+    {
+      "name": "getMediaListResponse",
+      "slug": "getmedialistresponse",
+      "docs": "",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "media",
+          "tags": [],
+          "docs": "The media items.",
+          "complexTypes": [
+            "MediaItem"
+          ],
+          "type": "MediaItem[]"
+        },
+        {
+          "name": "totalCount",
+          "tags": [],
+          "docs": "The total count of total media items in gallery.",
+          "complexTypes": [],
+          "type": "number"
+        }
+      ]
+    },
     {
       "name": "MediaItem",
       "slug": "mediaitem",
@@ -120,9 +199,23 @@
           "type": "number"
         },
         {
-          "name": "thumbnail",
+          "name": "modifiedAt",
+          "tags": [],
+          "docs": "The Unix timestamp in milliseconds when the media was last modified.",
+          "complexTypes": [],
+          "type": "number"
+        },
+        {
+          "name": "thumbnailV1",
           "tags": [],
           "docs": "Base64-encoded thumbnail image (only in `getMediaList`).",
+          "complexTypes": [],
+          "type": "string | undefined"
+        },
+        {
+          "name": "thumbnailV2",
+          "tags": [],
+          "docs": "Base64-encoded thumbnail image precious (only in `getMediaList`).",
           "complexTypes": [],
           "type": "string | undefined"
         },
@@ -151,6 +244,13 @@
           "name": "height",
           "tags": [],
           "docs": "Height of the media in pixels (requires `includeDetails`).",
+          "complexTypes": [],
+          "type": "number | undefined"
+        },
+        {
+          "name": "duration",
+          "tags": [],
+          "docs": "Duration of the media in milliseconds (only for videos).",
           "complexTypes": [],
           "type": "number | undefined"
         },
@@ -356,6 +456,22 @@
           "docs": "Whether to generate a temporary path to access the media.\r\nAvailable on iOS, Android, and Web.\r\n\r\n- On **iOS & Android**, the file path is only available if enabled.\r\n- On **Web**, the browser automatically provides a temporary URL.",
           "complexTypes": [],
           "type": "boolean | undefined"
+        }
+      ]
+    },
+    {
+      "name": "DeleteMediaOptions",
+      "slug": "deletemediaoptions",
+      "docs": "Options for querying some deleted media items.",
+      "tags": [],
+      "methods": [],
+      "properties": [
+        {
+          "name": "ids",
+          "tags": [],
+          "docs": "The unique identifier of the media item.",
+          "complexTypes": [],
+          "type": "string[]"
         }
       ]
     }

@@ -24,14 +24,31 @@ export interface GalleryPlusPlugin {
      * @returns {Promise<{ media: MediaItem[] }>}
      *          A promise resolving to an object containing a list of media items.
      */
-    getMediaList(options: GetMediaListOptions): Promise<{
-        media: MediaItem[];
-    }>;
+    getMediaList(options: GetMediaListOptions): Promise<getMediaListResponse>;
     /**
      * Retrieves details of a specific media item by its ID.
      * @returns {Promise<MediaItem>} A promise resolving to a media item object.
      */
     getMedia(options: GetMediaOptions): Promise<FullMediaItem>;
+    /**
+     * Get media list should be delete
+     * @param id - The IDs of the media items to be query.
+     * @returns {Promise<string[]>} A promise resolving to a list of media IDs that should be deleted (not in gallery).
+     */
+    getMediaListShouldBeDelete(options: DeleteMediaOptions): Promise<string[]>;
+    /**
+     * Get media list by many IDs
+     * @param options - The options for getting media list.
+     * @returns {Promise<FullMediaItem[]>} A promise resolving to a list of media items.
+     */
+    getMediaListByManyId(options: {
+        ids: string[];
+        includeDetails?: boolean;
+        includeBaseColor?: boolean;
+    }): Promise<{
+        media: MediaItem[];
+        totalCount: number;
+    }>;
 }
 export interface GetMediaListOptions {
     /**
@@ -118,6 +135,25 @@ export interface GetMediaOptions {
     includePath?: boolean;
 }
 /**
+ * Options for querying some deleted media items.
+ */
+export interface DeleteMediaOptions {
+    /**
+     * The unique identifier of the media item.
+     */
+    ids: string[];
+}
+export interface getMediaListResponse {
+    /**
+     * The media items.
+     */
+    media: MediaItem[];
+    /**
+     * The total count of total media items in gallery.
+     */
+    totalCount: number;
+}
+/**
  * An extended version of `MediaItem` returned by `getMedia`.
  */
 export interface FullMediaItem extends MediaItem {
@@ -152,9 +188,17 @@ export interface MediaItem {
      */
     createdAt: number;
     /**
+     *  The Unix timestamp in milliseconds when the media was last modified.
+     */
+    modifiedAt: number;
+    /**
      * Base64-encoded thumbnail image (only in `getMediaList`).
      */
-    thumbnail?: string;
+    thumbnailV1?: string;
+    /**
+     * Base64-encoded thumbnail image precious (only in `getMediaList`).
+     */
+    thumbnailV2?: string;
     /**
      * Dominant color of the image (requires `includeBaseColor`).
      */
@@ -171,6 +215,10 @@ export interface MediaItem {
      * Height of the media in pixels (requires `includeDetails`).
      */
     height?: number;
+    /**
+     * Duration of the media in milliseconds (only for videos).
+     */
+    duration?: number;
     /**
      * Size of the file in bytes.
      */

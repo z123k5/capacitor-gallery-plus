@@ -86,6 +86,8 @@ async function getMedia() {
 * [`requestPermissions()`](#requestpermissions)
 * [`getMediaList(...)`](#getmedialist)
 * [`getMedia(...)`](#getmedia)
+* [`getMediaListShouldBeDelete(...)`](#getmedialistshouldbedelete)
+* [`getMediaListByManyId(...)`](#getmedialistbymanyid)
 * [Interfaces](#interfaces)
 * [Enums](#enums)
 
@@ -123,7 +125,7 @@ Requests the necessary permissions to access media.
 ### getMediaList(...)
 
 ```typescript
-getMediaList(options: GetMediaListOptions) => Promise<{ media: MediaItem[]; }>
+getMediaList(options: GetMediaListOptions) => Promise<getMediaListResponse>
 ```
 
 Retrieves media items from the device gallery.
@@ -132,7 +134,7 @@ Retrieves media items from the device gallery.
 | ------------- | ------------------------------------------------------------------- | ----------------------------------- |
 | **`options`** | <code><a href="#getmedialistoptions">GetMediaListOptions</a></code> | - The options for retrieving media. |
 
-**Returns:** <code>Promise&lt;{ media: MediaItem[]; }&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#getmedialistresponse">getMediaListResponse</a>&gt;</code>
 
 --------------------
 
@@ -154,26 +156,71 @@ Retrieves details of a specific media item by its ID.
 --------------------
 
 
+### getMediaListShouldBeDelete(...)
+
+```typescript
+getMediaListShouldBeDelete(options: DeleteMediaOptions) => Promise<string[]>
+```
+
+Get media list should be delete
+
+| Param         | Type                                                              |
+| ------------- | ----------------------------------------------------------------- |
+| **`options`** | <code><a href="#deletemediaoptions">DeleteMediaOptions</a></code> |
+
+**Returns:** <code>Promise&lt;string[]&gt;</code>
+
+--------------------
+
+
+### getMediaListByManyId(...)
+
+```typescript
+getMediaListByManyId(options: { ids: string[]; includeDetails?: boolean; includeBaseColor?: boolean; }) => Promise<{ media: MediaItem[]; totalCount: number; }>
+```
+
+Get media list by many IDs
+
+| Param         | Type                                                                                  | Description                           |
+| ------------- | ------------------------------------------------------------------------------------- | ------------------------------------- |
+| **`options`** | <code>{ ids: string[]; includeDetails?: boolean; includeBaseColor?: boolean; }</code> | - The options for getting media list. |
+
+**Returns:** <code>Promise&lt;{ media: MediaItem[]; totalCount: number; }&gt;</code>
+
+--------------------
+
+
 ### Interfaces
+
+
+#### getMediaListResponse
+
+| Prop             | Type                     | Description                                      |
+| ---------------- | ------------------------ | ------------------------------------------------ |
+| **`media`**      | <code>MediaItem[]</code> | The media items.                                 |
+| **`totalCount`** | <code>number</code>      | The total count of total media items in gallery. |
 
 
 #### MediaItem
 
-| Prop             | Type                                                  | Description                                                          |
-| ---------------- | ----------------------------------------------------- | -------------------------------------------------------------------- |
-| **`id`**         | <code>string</code>                                   | Unique identifier of the media item.                                 |
-| **`type`**       | <code>'image' \| 'video'</code>                       | The type of media (image or video).                                  |
-| **`createdAt`**  | <code>number</code>                                   | The Unix timestamp in milliseconds when the media was created.       |
-| **`thumbnail`**  | <code>string</code>                                   | Base64-encoded thumbnail image (only in `getMediaList`).             |
-| **`baseColor`**  | <code>string</code>                                   | Dominant color of the image (requires `includeBaseColor`).           |
-| **`name`**       | <code>string</code>                                   | Original file name of the media (only applicable for web platforms). |
-| **`width`**      | <code>number</code>                                   | Width of the media in pixels (requires `includeDetails`).            |
-| **`height`**     | <code>number</code>                                   | Height of the media in pixels (requires `includeDetails`).           |
-| **`fileSize`**   | <code>number</code>                                   | Size of the file in bytes.                                           |
-| **`mimeType`**   | <code>string</code>                                   | The MIME type of the media item (e.g., "image/jpeg", "video/mp4").   |
-| **`isFavorite`** | <code>boolean</code>                                  | Indicates whether the media item is marked as a favorite. (iOS-only) |
-| **`isHidden`**   | <code>boolean</code>                                  | Indicates whether the media item is hidden. (iOS-only)               |
-| **`subtype`**    | <code><a href="#mediasubtype">MediaSubtype</a></code> | The subtype of the media, indicating special properties              |
+| Prop              | Type                                                  | Description                                                          |
+| ----------------- | ----------------------------------------------------- | -------------------------------------------------------------------- |
+| **`id`**          | <code>string</code>                                   | Unique identifier of the media item.                                 |
+| **`type`**        | <code>'image' \| 'video'</code>                       | The type of media (image or video).                                  |
+| **`createdAt`**   | <code>number</code>                                   | The Unix timestamp in milliseconds when the media was created.       |
+| **`modifiedAt`**  | <code>number</code>                                   | The Unix timestamp in milliseconds when the media was last modified. |
+| **`thumbnailV1`** | <code>string</code>                                   | Base64-encoded thumbnail image (only in `getMediaList`).             |
+| **`thumbnailV2`** | <code>string</code>                                   | Base64-encoded thumbnail image precious (only in `getMediaList`).    |
+| **`baseColor`**   | <code>string</code>                                   | Dominant color of the image (requires `includeBaseColor`).           |
+| **`name`**        | <code>string</code>                                   | Original file name of the media (only applicable for web platforms). |
+| **`width`**       | <code>number</code>                                   | Width of the media in pixels (requires `includeDetails`).            |
+| **`height`**      | <code>number</code>                                   | Height of the media in pixels (requires `includeDetails`).           |
+| **`duration`**    | <code>number</code>                                   | Duration of the media in milliseconds (only for videos).             |
+| **`fileSize`**    | <code>number</code>                                   | Size of the file in bytes.                                           |
+| **`mimeType`**    | <code>string</code>                                   | The MIME type of the media item (e.g., "image/jpeg", "video/mp4").   |
+| **`isFavorite`**  | <code>boolean</code>                                  | Indicates whether the media item is marked as a favorite. (iOS-only) |
+| **`isHidden`**    | <code>boolean</code>                                  | Indicates whether the media item is hidden. (iOS-only)               |
+| **`subtype`**     | <code><a href="#mediasubtype">MediaSubtype</a></code> | The subtype of the media, indicating special properties              |
 
 
 #### GetMediaListOptions
@@ -210,6 +257,15 @@ An extended version of <a href="#mediaitem">`MediaItem`</a> returned by `getMedi
 | **`includeDetails`**   | <code>boolean</code> | Whether to include additional metadata such as width, height, and file size.                                                                                                                                                        | <code>false</code>                                          |
 | **`includeBaseColor`** | <code>boolean</code> | Whether to extract and return the dominant color of the image.                                                                                                                                                                      | <code>false</code>                                          |
 | **`includePath`**      | <code>boolean</code> | Whether to generate a temporary path to access the media. Available on iOS, Android, and Web. - On **iOS & Android**, the file path is only available if enabled. - On **Web**, the browser automatically provides a temporary URL. | <code>false (iOS & Android), always available on Web</code> |
+
+
+#### DeleteMediaOptions
+
+Options for querying some deleted media items.
+
+| Prop      | Type                  | Description                              |
+| --------- | --------------------- | ---------------------------------------- |
+| **`ids`** | <code>string[]</code> | The unique identifier of the media item. |
 
 
 ### Enums
